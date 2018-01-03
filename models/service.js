@@ -189,7 +189,7 @@ const ServiceSchema = new Schema({
    * @since 0.1.0
    * @version 0.1.0
    */
-  priority: {//TODO support optional population
+  priority: { //TODO support optional population
     type: ObjectId,
     ref: 'Priority',
     autoset: true,
@@ -218,7 +218,10 @@ const ServiceSchema = new Schema({
     default: false
   }
 
-}, { timestamps: true, emitIndexErrors: true });
+}, {
+  timestamps: true,
+  emitIndexErrors: true
+});
 
 
 //-----------------------------------------------------------------------------
@@ -229,7 +232,14 @@ const ServiceSchema = new Schema({
 //ensure `unique` compound index on jurisdiction, group, name and code
 //to fix unique indexes on code and name in case they are used in more than
 //one jurisdiction with different administration
-ServiceSchema.index({ jurisdiction: 1, group: 1, name: 1, code: 1 }, { unique: true });
+ServiceSchema.index({
+  jurisdiction: 1,
+  group: 1,
+  name: 1,
+  code: 1
+}, {
+  unique: true
+});
 
 
 
@@ -320,6 +330,17 @@ ServiceSchema.pre('validate', function (next) {
   next();
 
 });
+
+// plugins
+ServiceSchema.plugin(mongooseExists);
+ServiceSchema.plugin(mongooseAutoset);
+ServiceSchema.plugin(mongooseRegexSearch);
+ServiceSchema.plugin(mongooseShow);
+ServiceSchema.plugin(mongooseEdit);
+ServiceSchema.plugin(mongooseReload);
+ServiceSchema.plugin(mongooseList);
+ServiceSchema.plugin(mongooseSoftDelete);
+ServiceSchema.plugin(mongoosePaginate);
 
 
 //-----------------------------------------------------------------------------

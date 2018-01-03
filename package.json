@@ -17,7 +17,8 @@
     "tanzania",
     "service group"
   ],
-  "authors": [{
+  "authors": [
+    {
       "name": "lykmapipo",
       "email": "lallyelias87@gmail.com",
       "url": "https://github.com/lykmapipo"
@@ -42,7 +43,8 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
-    "majifix-jurisdiction": "git+ssh://git@github.com/CodeTanzania/majifix-jurisdiction.git#develop",
+    "majifix-jurisdiction": "git+https://git@github.com/CodeTanzania/majifix-jurisdiction.git#develop",
+    "majifix-service-group": "git+https://git@github.com/CodeTanzania/majifix-service-group.git#develop",
     "mocha": "^4.1.0",
     "superagent": "^3.8.2",
     "supertest": "^3.0.0"
