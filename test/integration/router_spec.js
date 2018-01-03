@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Service routser specification
+ * Service router specification
  *
  * @description :: Server-side router specification for Service
  */
@@ -12,6 +12,7 @@ const expect = require('chai').expect;
 const faker = require('faker');
 const request = require('supertest');
 const bodyParser = require('body-parser');
+const ServiceGroup = require('majifix-service-group')().model;
 const router = require(path.join(__dirname, '..', '..', 'http', 'router'))();
 const app = require('express')();
 
@@ -26,12 +27,29 @@ app.use(bodyParser.urlencoded({
 app.use(router);
 
 let service;
+let serviceGroup;
 
 describe('Service Router', function () {
+
+  before(function (done) {
+    serviceGroup = {
+      name: faker.company.companyName(),
+      description: faker.company.catchPhrase()
+    };
+
+    ServiceGroup.create(serviceGroup, function (error, created) {
+      serviceGroup = created;
+      done(error, created);
+    });
+  });
+
   it('should handle HTTP POST on /services', done => {
+
     service = {
       name: faker.company.companyName(),
-      code: faker.random.alphaNumeric(4)
+      code: faker.random.alphaNumeric(4),
+      description: faker.company.catchPhrase(),
+      group: serviceGroup._id
     };
 
     request(app)
@@ -54,6 +72,7 @@ describe('Service Router', function () {
         expect(created.code).to.exist;
         expect(created.name).to.be.equal(service.name);
         expect(created.code).to.be.equal(service.code);
+        expect(created.group).to.be.eql(service.group.toString());
 
 
         service = created;

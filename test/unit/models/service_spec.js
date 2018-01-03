@@ -10,9 +10,10 @@
 const path = require('path');
 const faker = require('faker');
 const expect = require('chai').expect;
-const Jurisdiction = mongoose.model('Jurisdiction');
-const ServiceGroup = mongoose.model('ServiceGroup');
-const Service = require(path.join(__dirname, '..', '..', '..', 'models', 'service'));
+const Jurisdiction = require('majifix-jurisdiction')().model;
+const ServiceGroup = require('majifix-service-group')().model;
+const Service = require(path.join(__dirname, '..', '..', '..', 'models',
+  'service'));
 let jurisdiction;
 let serviceGroup;
 let service;

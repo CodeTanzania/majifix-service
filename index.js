@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * @module majifix service group
+ * @module majifix service
  * @version 0.1.0
- * @description majifix service group library
+ * @description majifix service library
  * @author Benson Maruchu <benmaruchu@gmail.com>
  * @public
  */
@@ -12,7 +12,7 @@ const path = require('path');
 let mongoose = require('mongoose');
 const _ = require('lodash');
 const Model = require(path.join(__dirname, 'models', 'service'));
-const serviceGroupRouter = require(path.join(__dirname, 'http', 'router'));
+const serviceRouter = require(path.join(__dirname, 'http', 'router'));
 
 
 module.exports = function (options) {
@@ -23,7 +23,7 @@ module.exports = function (options) {
 
   const routerOptions = _.get(options, 'router', {});
 
-  const Router = serviceGroupRouter(routerOptions);
+  const Router = serviceRouter(routerOptions);
 
   return {
     model: Model,

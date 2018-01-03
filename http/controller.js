@@ -2,24 +2,23 @@
 
 //dependencies
 const path = require('path');
-const ServiceGroup = require(path.join(__dirname, '..', 'models',
-  'service_group'));
+const Service = require(path.join(__dirname, '..', 'models', 'service'));
 
 /**
- * ServiceGroup Controller
+ * Service Controller
  *
- * @description :: Server-side logic for managing ServiceGroup.
+ * @description :: Server-side logic for managing Service.
  */
 module.exports = {
   /**
    * @function
-   * @name servicegroups.index()
-   * @description display a list of all servicegroups
+   * @name services.index()
+   * @description display a list of all services
    * @param  {HttpRequest} request  a http request
    * @param  {HttpResponse} response a http response
    */
   index: function (request, response, next) {
-    ServiceGroup
+    Service
       .list(request, function (error, results) {
         if (error) {
           next(error);
@@ -32,18 +31,18 @@ module.exports = {
 
   /**
    * @function
-   * @name servicegroups.create()
-   * @description create a new servicegroup
+   * @name services.create()
+   * @description create a new service
    * @param  {HttpRequest} request  a http request
    * @param  {HttpResponse} response a http response
    */
   create: function (request, response, next) {
-    ServiceGroup
-      .create(request.body, function (error, servicegroup) {
+    Service
+      .create(request.body, function (error, service) {
         if (error) {
           next(error);
         } else {
-          response.created(servicegroup);
+          response.created(service);
         }
       });
   },
@@ -51,18 +50,18 @@ module.exports = {
 
   /**
    * @function
-   * @name servicegroups.show()
-   * @description display a specific servicegroup
+   * @name services.show()
+   * @description display a specific service
    * @param  {HttpRequest} request  a http request
    * @param  {HttpResponse} response a http response
    */
   show: function (request, response, next) {
-    ServiceGroup
-      .show(request, function (error, servicegroup) {
+    Service
+      .show(request, function (error, service) {
         if (error) {
           next(error);
         } else {
-          response.ok(servicegroup);
+          response.ok(service);
         }
       });
   },
@@ -70,24 +69,24 @@ module.exports = {
 
   /**
    * @function
-   * @name servicegroups.update()
-   * @description update a specific servicegroup
+   * @name services.update()
+   * @description update a specific service
    * @param  {HttpRequest} request  a http request
    * @param  {HttpResponse} response a http response
    */
   update: function (request, response, next) {
-    ServiceGroup
+    Service
       .findByIdAndUpdate(
         request.params.id,
         request.body, {
           upsert: true,
           new: true
         },
-        function (error, servicegroup) {
+        function (error, service) {
           if (error) {
             next(error);
           } else {
-            response.ok(servicegroup);
+            response.ok(service);
           }
         });
   },
@@ -95,21 +94,22 @@ module.exports = {
 
   /**
    * @function
-   * @name servicegroups.destroy()
-   * @description delete a specific servicegroup
+   * @name services.destroy()
+   * @description delete a specific service
    * @param  {HttpRequest} request  a http request
    * @param  {HttpResponse} response a http response
    */
   destroy: function (request, response, next) {
-    ServiceGroup
+    Service
       .findByIdAndRemove(
         request.params.id,
-        function (error, servicegroup) {
+        function (error, service) {
           if (error) {
             next(error);
           } else {
-            response.ok(servicegroup);
+            response.ok(service);
           }
         });
   }
+
 };
