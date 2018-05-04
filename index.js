@@ -1,32 +1,59 @@
 'use strict';
 
+
 /**
- * @module majifix service
- * @version 0.1.0
- * @description majifix service library
+ * @name majifix-service
+ * @description A representation of an acceptable 
+ * service (request types)(e.g Water Leakage) offered(or handled) 
+ * by a specific jurisdiction.
+ * 
  * @author Benson Maruchu <benmaruchu@gmail.com>
- * @public
+ * @author lally elias <lallyelias87@mail.com>
+ * @since  0.1.0
+ * @version 0.1.0
+ * @example
+ *
+ * const { app } = require('majifix-service');
+ *
+ * ...
+ *
+ * app.start();
+ *
  */
 
+
+/* dependencies */
 const path = require('path');
-let mongoose = require('mongoose');
-const _ = require('lodash');
-const Model = require(path.join(__dirname, 'models', 'service'));
-const serviceRouter = require(path.join(__dirname, 'http', 'router'));
+const app = require('@lykmapipo/express-common');
 
 
-module.exports = function (options) {
+/* import models */
+const Service =
+  require(path.join(__dirname, 'lib', 'service.model'));
 
-  options = _.merge({}, options);
 
-  mongoose = _.get(options, 'mongoose', mongoose);
+/* import routers*/
+const router =
+  require(path.join(__dirname, 'lib', 'http.router'));
 
-  const routerOptions = _.get(options, 'router', {});
 
-  const Router = serviceRouter(routerOptions);
+/* export service model */
+exports.Service = Service;
 
-  return {
-    model: Model,
-    router: Router
-  };
-};
+
+/* export service router */
+exports.router = router;
+
+
+/* export app */
+Object.defineProperty(exports, 'app', {
+  get() {
+
+    //TODO bind oauth middlewares authenticate, token, authorize
+
+    /* bind service router */
+    app.mount(router);
+    return app;
+  }
+
+});

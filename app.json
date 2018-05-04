@@ -1,0 +1,14 @@
+{
+  "name": "majifix-service",
+  "description": "A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction",
+  "repository": "https://github.com/CodeTanzania/majifix-service.git",
+  "keywords": [
+    "open311",
+    "311",
+    "majifix",
+    "service"
+  ],
+  "addons": [
+    "mongolab"
+  ]
+}
