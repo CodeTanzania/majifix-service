@@ -7,24 +7,45 @@
  * service (request types)(e.g Water Leakage) offered(or handled) 
  * by a specific jurisdiction.
  * 
- * @author Benson Maruchu <benmaruchu@gmail.com>
+  * @author Benson Maruchu <benmaruchu@gmail.com>
  * @author lally elias <lallyelias87@mail.com>
  * @since  0.1.0
  * @version 0.1.0
+ * @license MIT
  * @example
  *
- * const { app } = require('majifix-service');
+ * const { app } = require('majifix-service-group');
  *
  * ...
  *
- * app.start();
- *
+ * app.start()
  */
 
 
 /* dependencies */
 const path = require('path');
+const _ = require('lodash');
 const app = require('@lykmapipo/express-common');
+
+
+/* declarations */
+const pkg = require(path.join(__dirname, 'package.json'));
+const fields = [
+  'name',
+  'description',
+  'version',
+  'license',
+  'homepage',
+  'repository',
+  'bugs',
+  'sandbox',
+  'contributors'
+];
+const info = _.merge({}, _.pick(pkg, fields));
+
+
+/* ensure api version */
+process.env.API_VERSION = (process.env.API_VERSION || info.version);
 
 
 /* import models */
@@ -35,6 +56,10 @@ const Service =
 /* import routers*/
 const router =
   require(path.join(__dirname, 'lib', 'http.router'));
+  
+
+/* export package(module) info */
+exports.info = info;
 
 
 /* export service model */

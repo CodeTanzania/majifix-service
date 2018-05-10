@@ -7,8 +7,8 @@ const faker = require('faker');
 function sample(n = 3) {
   return {
     code: faker.finance.account(),
-    name: faker.commerce.productName(),
-    description: faker.lorem.paragraph(),
+    name: { en: faker.company.companyName(), sw: faker.company.companyName() },
+    description: { en: faker.lorem.paragraph(), sw: faker.lorem.paragraph() },
     isExternal: n % 2 > 0 ? true : false
   };
 }

@@ -1,10 +1,10 @@
 {
   "name": "majifix-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction",
   "title": "MajiFix Service",
-  "url": "https://majifix-service.herokuapp.com/v1.0.0",
-  "sampleUrl": "https://majifix-service.herokuapp.com/v1.0.0",
+  "url": "https://majifix-service.herokuapp.com/v0.1.0",
+  "sampleUrl": "https://majifix-service.herokuapp.com/v0.1.0",
   "template":
   {
     "withCompare": true,

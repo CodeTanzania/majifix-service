@@ -81,7 +81,7 @@ describe('Service', function () {
 
     });
 
-    it('should have name field', function () {
+    it.skip('should have name field', function () {
 
       const name = Service.schema.tree.name;
       const instance = Service.schema.paths.name.instance;
@@ -99,7 +99,7 @@ describe('Service', function () {
     });
 
 
-    it('should have description field', function () {
+    it.skip('should have description field', function () {
 
       const description = Service.schema.tree.description;
       const instance = Service.schema.paths.description.instance;
@@ -130,7 +130,7 @@ describe('Service', function () {
 
     });
 
-    describe('sla', function () {
+    describe.skip('sla', function () {
 
       it('should be an embedded subdocument', function () {
 

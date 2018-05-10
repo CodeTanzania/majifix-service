@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const { expect } = require('chai');
 const { Service } = require(path.join(__dirname, '..', '..'));
 
-describe('Service', function () {
+describe.skip('Service', function () {
 
   before(function (done) {
     mongoose.connect('mongodb://localhost/majifix-service', done);
