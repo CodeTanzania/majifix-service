@@ -60,9 +60,9 @@ function boot() {
     function seed(jurisdiction, group, priority, next) {
       /* fake services */
       samples = _.map(samples, function (sample, index) {
+        sample.jurisdiction = jurisdiction;
+        sample.group = group;
         if ((index % 2 === 0)) {
-          sample.jurisdiction = jurisdiction;
-          sample.group = group;
           sample.priority = priority;
         }
         return sample;
