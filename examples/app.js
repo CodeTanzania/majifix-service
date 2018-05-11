@@ -10,6 +10,7 @@ const path = require('path');
 const _ = require('lodash');
 const async = require('async');
 const mongoose = require('mongoose');
+mongoose.set('debug', true);
 const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
@@ -25,39 +26,52 @@ function boot() {
 
   async.waterfall([
 
-    function clear(next) {
+    function clearServices(next) {
       Service.remove(function ( /*error, results*/ ) {
         next();
       });
     },
 
-    function seedJurisdiction(next) {
-      const jurisdiction = Jurisdiction.fake();
-      Jurisdiction.remove(function ( /*error, results*/ ) {
-        jurisdiction.post(next);
-      });
-    },
-
-    function seedServiceGroup(jurisdiction, next) {
-      const servicegroup = ServiceGroup.fake();
-      ServiceGroup.remove(function ( /*error, results*/ ) {
-        servicegroup.jurisdiction = jurisdiction;
-        servicegroup.post(next);
-      });
-    },
-
-    function seedPriority(group, next) {
-      const priority = Priority.fake();
-      const jurisdiction = group.jurisdiction;
+    function clearPriorities(next) {
       Priority.remove(function ( /*error, results*/ ) {
-        priority.jurisdiction = jurisdiction;
-        priority.post(function (error, created) {
-          next(error, jurisdiction, group, created);
-        });
+        next();
       });
     },
 
-    function seed(jurisdiction, group, priority, next) {
+    function clearServiceGroups(next) {
+      ServiceGroup.remove(function ( /*error, results*/ ) {
+        next();
+      });
+    },
+
+    function clearJurisdictions(next) {
+      Jurisdiction.remove(function ( /*error, results*/ ) {
+        next();
+      });
+    },
+
+    function seedJurisdictions(next) {
+      const jurisdiction = Jurisdiction.fake();
+      jurisdiction.post(next);
+    },
+
+    function seedServiceGroups(jurisdiction, next) {
+      const servicegroup = ServiceGroup.fake();
+      servicegroup.jurisdiction = jurisdiction;
+      servicegroup.post(function (error, created) {
+        next(error, jurisdiction, created);
+      });
+    },
+
+    function seedPriorities(jurisdiction, group, next) {
+      const priority = Priority.fake();
+      priority.jurisdiction = jurisdiction;
+      priority.post(function (error, created) {
+        next(error, jurisdiction, group, created);
+      });
+    },
+
+    function seedServices(jurisdiction, group, priority, next) {
       /* fake services */
       samples = _.map(samples, function (sample, index) {
         sample.jurisdiction = jurisdiction;
