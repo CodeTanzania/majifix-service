@@ -3,32 +3,76 @@
 /* dependencies */
 const path = require('path');
 const request = require('supertest');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
-const { Service, app } = require(path.join(__dirname, '..', '..'));
+const { Jurisdiction } = require('majifix-jurisdiction');
+const { ServiceGroup } = require('majifix-service-group');
+const { Priority } = require('majifix-priority');
+const {
+  Service,
+  app,
+  info
+} = require(path.join(__dirname, '..', '..'));
 
-
-describe.skip('Service', function () {
+describe.only('Service', function () {
 
   describe('Rest API', function () {
 
-    before(function (done) {
-      mongoose.connect('mongodb://localhost/majifix-service',
-        done);
-    });
+    let jurisdiction;
+    let priority;
+    let group;
+    let service;
 
     before(function (done) {
       Service.remove(done);
     });
 
-    let service;
+    before(function (done) {
+      ServiceGroup.remove(done);
+    });
+
+    before(function (done) {
+      Priority.remove(done);
+    });
+
+    before(function (done) {
+      Jurisdiction.remove(done);
+    });
+
+    before(function (done) {
+      jurisdiction = Jurisdiction.fake();
+      jurisdiction.post(function (error, created) {
+        jurisdiction = created;
+        done(error, created);
+      });
+    });
+
+    before(function (done) {
+      priority = Priority.fake();
+      priority.jurisdiction = jurisdiction;
+      priority.post(function (error, created) {
+        priority = created;
+        done(error, created);
+      });
+    });
+
+    before(function (done) {
+      group = ServiceGroup.fake();
+      group.jurisdiction = jurisdiction;
+      group.post(function (error, created) {
+        group = created;
+        done(error, created);
+      });
+    });
 
     it('should handle HTTP POST on /services', function (done) {
 
       service = Service.fake();
+      service.jurisdiction = jurisdiction;
+      service.group = group;
+      service.priority = priority;
 
       request(app)
-        .post('/v1.0.0/services')
+        .post(`/v${info.version}/services`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(service)
@@ -41,7 +85,7 @@ describe.skip('Service', function () {
 
           expect(created._id).to.exist;
           expect(created.code).to.exist;
-          expect(created.name).to.exist;
+          expect(created.name.en).to.exist;
 
           done(error, response);
 
@@ -52,7 +96,7 @@ describe.skip('Service', function () {
     it('should handle HTTP GET on /services', function (done) {
 
       request(app)
-        .get('/v1.0.0/services')
+        .get(`/v${info.version}/services`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -78,7 +122,7 @@ describe.skip('Service', function () {
     it('should handle HTTP GET on /services/id:', function (done) {
 
       request(app)
-        .get(`/v1.0.0/services/${service._id}`)
+        .get(`/v${info.version}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -88,7 +132,7 @@ describe.skip('Service', function () {
           const found = response.body;
           expect(found._id).to.exist;
           expect(found._id).to.be.equal(service._id.toString());
-          expect(found.name).to.be.equal(service.name);
+          expect(found.name.en).to.be.equal(service.name.en);
 
           done(error, response);
 
@@ -101,7 +145,7 @@ describe.skip('Service', function () {
       const patch = service.fakeOnly('name');
 
       request(app)
-        .patch(`/v1.0.0/services/${service._id}`)
+        .patch(`/v${info.version}/services/${service._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -114,7 +158,7 @@ describe.skip('Service', function () {
 
           expect(patched._id).to.exist;
           expect(patched._id).to.be.equal(service._id.toString());
-          expect(patched.name).to.be.equal(service.name);
+          expect(patched.name.en).to.be.equal(service.name.en);
 
           done(error, response);
 
@@ -127,7 +171,7 @@ describe.skip('Service', function () {
       const put = service.fakeOnly('name');
 
       request(app)
-        .put(`/v1.0.0/services/${service._id}`)
+        .put(`/v${info.version}/services/${service._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(put)
@@ -140,7 +184,7 @@ describe.skip('Service', function () {
 
           expect(puted._id).to.exist;
           expect(puted._id).to.be.equal(service._id.toString());
-          expect(puted.name).to.be.equal(service.name);
+          expect(puted.name.en).to.be.equal(service.name.en);
 
           done(error, response);
 
@@ -148,11 +192,10 @@ describe.skip('Service', function () {
 
     });
 
-    it('should handle HTTP DELETE on /services/:id', function (
-      done) {
+    it('should handle HTTP DELETE on /services/:id', function (done) {
 
       request(app)
-        .delete(`/v1.0.0/services/${service._id}`)
+        .delete(`/v${info.version}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -163,7 +206,7 @@ describe.skip('Service', function () {
 
           expect(deleted._id).to.exist;
           expect(deleted._id).to.be.equal(service._id.toString());
-          expect(deleted.name).to.be.equal(service.name);
+          expect(deleted.name.en).to.be.equal(service.name.en);
 
           done(error, response);
 
@@ -174,6 +217,18 @@ describe.skip('Service', function () {
 
     after(function (done) {
       Service.remove(done);
+    });
+
+    after(function (done) {
+      ServiceGroup.remove(done);
+    });
+
+    after(function (done) {
+      Priority.remove(done);
+    });
+
+    after(function (done) {
+      Jurisdiction.remove(done);
     });
 
   });

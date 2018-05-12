@@ -16,7 +16,6 @@ const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
 const { Service, app, info } = require(path.join(__dirname, '..'));
 let samples = require('./samples')(20);
-console.log(Service.schema.paths.jurisdiction);
 
 
 /* connect to mongoose */
