@@ -13,7 +13,7 @@ const {
   info
 } = require(path.join(__dirname, '..', '..'));
 
-describe.only('Service', function () {
+describe('Service', function () {
 
   describe('Rest API', function () {
 
