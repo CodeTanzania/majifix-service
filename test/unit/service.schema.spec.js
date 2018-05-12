@@ -81,37 +81,70 @@ describe('Service', function () {
 
     });
 
-    it.skip('should have name field', function () {
 
-      const name = Service.schema.tree.name;
-      const instance = Service.schema.paths.name.instance;
+    describe('name', function () {
 
-      expect(instance).to.be.equal('String');
-      expect(name).to.exist;
-      expect(name).to.be.an('object');
-      expect(name.type).to.be.a('function');
-      expect(name.type.name).to.be.equal('String');
-      expect(name.required).to.be.true;
-      expect(name.trim).to.be.true;
-      expect(name.index).to.be.true;
-      expect(name.searchable).to.be.true;
+      it('should be an embedded sub-document', function () {
+        const name = Service.schema.tree.name;
+        const instance = Service.schema.paths.name.instance;
+        const tree = Service.schema.tree.name.tree;
+
+        expect(instance).to.be.equal('Embedded');
+        expect(name).to.exist;
+        expect(name).to.be.an('object');
+        expect(tree).to.exist;
+        expect(tree.en).to.exist;
+      });
+
+      it('should have type `en` locale field', function () {
+        const instance =
+          Service.schema.paths.name.schema.paths.en.instance;
+        const en = Service.schema.tree.name.tree.en;
+
+        expect(instance).to.be.equal('String');
+        expect(en).to.exist;
+        expect(en).to.be.an('object');
+        expect(en.type).to.be.a('function');
+        expect(en.type.name).to.be.equal('String');
+        expect(en.required).to.be.true;
+        expect(en.trim).to.be.true;
+        expect(en.index).to.be.true;
+        expect(en.required).to.be.true;
+        expect(en.searchable).to.be.true;
+
+      });
 
     });
 
+    describe('description', function () {
 
-    it.skip('should have description field', function () {
+      it('should be an embedded sub-document', function () {
+        const description = Service.schema.tree.description;
+        const instance = Service.schema.paths.description.instance;
+        const tree = Service.schema.tree.description.tree;
 
-      const description = Service.schema.tree.description;
-      const instance = Service.schema.paths.description.instance;
+        expect(instance).to.be.equal('Embedded');
+        expect(description).to.exist;
+        expect(description).to.be.an('object');
+        expect(tree).to.exist;
+        expect(tree.en).to.exist;
+      });
 
-      expect(instance).to.be.equal('String');
-      expect(description).to.exist;
-      expect(description).to.be.an('object');
-      expect(description.type).to.be.a('function');
-      expect(description.type.name).to.be.equal('String');
-      expect(description.trim).to.be.true;
-      expect(description.searchable).to.be.true;
-      expect(description.index).to.be.true;
+      it('should have type `en` locale field', function () {
+        const instance =
+          Service.schema.paths.description.schema.paths.en.instance;
+        const en = Service.schema.tree.description.tree.en;
+
+        expect(instance).to.be.equal('String');
+        expect(en).to.exist;
+        expect(en).to.be.an('object');
+        expect(en.type).to.be.a('function');
+        expect(en.type.name).to.be.equal('String');
+        expect(en.trim).to.be.true;
+        expect(en.index).to.be.true;
+        expect(en.searchable).to.be.true;
+
+      });
 
     });
 
@@ -130,7 +163,7 @@ describe('Service', function () {
 
     });
 
-    describe.skip('sla', function () {
+    describe('sla', function () {
 
       it('should be an embedded subdocument', function () {
 
