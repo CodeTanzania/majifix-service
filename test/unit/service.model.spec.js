@@ -24,7 +24,11 @@ describe('Service', function () {
       expect(Service.OPTION_AUTOPOPULATE).to.exist;
       expect(Service.OPTION_AUTOPOPULATE)
         .to.be.eql({
-          select: { description: 0 },
+          select: {
+            code: 1,
+            name: 1,
+            color: 1
+          },
           maxDepth: 1
         });
     });
