@@ -7,7 +7,7 @@
  * service (request types)(e.g Water Leakage) offered(or handled) 
  * by a specific jurisdiction.
  * 
-  * @author Benson Maruchu <benmaruchu@gmail.com>
+ * @author Benson Maruchu <benmaruchu@gmail.com>
  * @author lally elias <lallyelias87@mail.com>
  * @since  0.1.0
  * @version 0.1.0
@@ -56,7 +56,7 @@ const Service =
 /* import routers*/
 const router =
   require(path.join(__dirname, 'lib', 'http.router'));
-  
+
 
 /* export package(module) info */
 exports.info = info;
