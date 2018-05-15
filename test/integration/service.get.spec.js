@@ -73,10 +73,10 @@ describe('Service', function () {
           };
         });
       async
-      .parallel(fakes, function (error, created) {
-        services = created;
-        done(error, created);
-      });
+        .parallel(fakes, function (error, created) {
+          services = created;
+          done(error, created);
+        });
     });
 
     it('should be able to get without options', function (done) {
@@ -141,9 +141,9 @@ describe('Service', function () {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
-          expect(results.data).to.have.length(1);
+          expect(results.data).to.have.length.of.at.least(1);
           expect(results.total).to.exist;
-          expect(results.total).to.be.equal(1);
+          expect(results.total).to.be.at.least(1);
           expect(results.limit).to.exist;
           expect(results.limit).to.be.equal(10);
           expect(results.skip).to.exist;
@@ -168,9 +168,9 @@ describe('Service', function () {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
-          expect(results.data).to.have.length(1);
+          expect(results.data).to.have.length.of.at.least(1);
           expect(results.total).to.exist;
-          expect(results.total).to.be.equal(1);
+          expect(results.total).to.be.at.least(1);
           expect(results.limit).to.exist;
           expect(results.limit).to.be.equal(10);
           expect(results.skip).to.exist;
