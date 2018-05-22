@@ -4,14 +4,11 @@
 const path = require('path');
 const request = require('supertest');
 const { expect } = require('chai');
+const { env } = require('majifix-common');
 const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
-const {
-  Service,
-  app,
-  info
-} = require(path.join(__dirname, '..', '..'));
+const { Service, app } = require(path.join(__dirname, '..', '..'));
 
 describe('Service', function () {
 
@@ -72,7 +69,7 @@ describe('Service', function () {
       service.priority = priority;
 
       request(app)
-        .post(`/v${info.version}/services`)
+        .post(`/v${env.API_VERSION}/services`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(service)
@@ -96,7 +93,7 @@ describe('Service', function () {
     it('should handle HTTP GET on /services', function (done) {
 
       request(app)
-        .get(`/v${info.version}/services`)
+        .get(`/v${env.API_VERSION}/services`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -122,7 +119,7 @@ describe('Service', function () {
     it('should handle HTTP GET on /services/id:', function (done) {
 
       request(app)
-        .get(`/v${info.version}/services/${service._id}`)
+        .get(`/v${env.API_VERSION}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -145,7 +142,7 @@ describe('Service', function () {
       const patch = service.fakeOnly('name');
 
       request(app)
-        .patch(`/v${info.version}/services/${service._id}`)
+        .patch(`/v${env.API_VERSION}/services/${service._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -171,7 +168,7 @@ describe('Service', function () {
       const put = service.fakeOnly('name');
 
       request(app)
-        .put(`/v${info.version}/services/${service._id}`)
+        .put(`/v${env.API_VERSION}/services/${service._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(put)
@@ -195,7 +192,7 @@ describe('Service', function () {
     it('should handle HTTP DELETE on /services/:id', function (done) {
 
       request(app)
-        .delete(`/v${info.version}/services/${service._id}`)
+        .delete(`/v${env.API_VERSION}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {

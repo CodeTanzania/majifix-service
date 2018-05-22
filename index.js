@@ -3,10 +3,10 @@
 
 /**
  * @name majifix-service
- * @description A representation of an acceptable 
- * service (request types)(e.g Water Leakage) offered(or handled) 
+ * @description A representation of an acceptable
+ * service (request types)(e.g Water Leakage) offered(or handled)
  * by a specific jurisdiction.
- * 
+ *
  * @author Benson Maruchu <benmaruchu@gmail.com>
  * @author lally elias <lallyelias87@mail.com>
  * @since  0.1.0
@@ -41,11 +41,9 @@ const fields = [
   'sandbox',
   'contributors'
 ];
+
+/* extract information from package.json */
 const info = _.merge({}, _.pick(pkg, fields));
-
-
-/* ensure api version */
-process.env.API_VERSION = (process.env.API_VERSION || info.version);
 
 
 /* import models */
