@@ -4,7 +4,7 @@
 const path = require('path');
 const request = require('supertest');
 const { expect } = require('chai');
-const { env } = require('majifix-common');
+const { env } = require('@codetanzania/majifix-common');
 const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
