@@ -4,7 +4,7 @@
 const path = require('path');
 const _ = require('lodash');
 const { expect } = require('chai');
-const { Jurisdiction } = require('majifix-jurisdiction');
+const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
 const { Service } = require(path.join(__dirname, '..', '..'));
@@ -118,7 +118,7 @@ describe('Service', function () {
     });
 
     it('should throw if not exists', function (done) {
-      
+
       const service = Service.fake();
 
       Service

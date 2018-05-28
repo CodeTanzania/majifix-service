@@ -11,7 +11,7 @@ const _ = require('lodash');
 const async = require('async');
 const mongoose = require('mongoose');
 // mongoose.set('debug', true);
-const { Jurisdiction } = require('majifix-jurisdiction');
+const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require('majifix-service-group');
 const { Priority } = require('majifix-priority');
 const { Service, app, info } = require(path.join(__dirname, '..'));
