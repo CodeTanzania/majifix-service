@@ -1,5 +1,4 @@
-majifix-service
-====================
+# majifix-service
 
 [![Build Status](https://travis-ci.org/CodeTanzania/majifix-service.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service)
 [![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service)
@@ -9,21 +8,21 @@ A representation of an acceptable service (request types)(e.g Water Leakage) off
 
 ## Requirements
 
-- [NodeJS v9.9.0+](https://nodejs.org)
+- [NodeJS v8.11.1+](https://nodejs.org)
 - [MongoDB v3.4.10+](https://www.mongodb.com/)
-- [Mongoose v5.0.14+](https://github.com/Automattic/mongoose)
+- [Mongoose v5.1.2+](https://github.com/Automattic/mongoose)
 
 ## Installation
 
 ```sh
-$ npm install majifix-service --save
+npm install @codetanzania/majifix-service --save
 ```
 
 ## Usage
 
 ```js
 const mongoose = require('mongoose');
-const { app } = require('majifix-service');
+const { app } = require('@codetanzania/majifix-service');
 
 //connect to mongodb
 mongoose.connect(process.env.MONGODB_URI);
@@ -36,21 +35,24 @@ app.start(function(error, env) {
 
 ## Testing
 
-* Clone this repository
+- Clone this repository
 
-* Install all development dependencies
+- Install all development dependencies
+
 ```sh
-$ npm install
+npm install
 ```
 
-* Run example
+- Run example
+
 ```sh
-$ npm run dev
+npm run dev
 ```
 
-* Then run test
+- Then run test
+
 ```sh
-$ npm test
+npm test
 ```
 
 ## Contribute
