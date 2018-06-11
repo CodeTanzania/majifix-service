@@ -12,8 +12,8 @@ const async = require('async');
 const mongoose = require('mongoose');
 // mongoose.set('debug', true);
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
-const { ServiceGroup } = require('majifix-service-group');
-const { Priority } = require('majifix-priority');
+const { ServiceGroup } = require('@codetanzania/majifix-service-group');
+const { Priority } = require('@codetanzania/majifix-priority');
 const { Service, router, info, app } = require(path.join(__dirname, '..'));
 let samples = require('./samples')(20);
 
@@ -27,25 +27,25 @@ function boot() {
   async.waterfall([
 
     function clearServices(next) {
-      Service.remove(function ( /*error, results*/) {
+      Service.remove(function ( /*error, results*/ ) {
         next();
       });
     },
 
     function clearPriorities(next) {
-      Priority.remove(function ( /*error, results*/) {
+      Priority.remove(function ( /*error, results*/ ) {
         next();
       });
     },
 
     function clearServiceGroups(next) {
-      ServiceGroup.remove(function ( /*error, results*/) {
+      ServiceGroup.remove(function ( /*error, results*/ ) {
         next();
       });
     },
 
     function clearJurisdictions(next) {
-      Jurisdiction.remove(function ( /*error, results*/) {
+      Jurisdiction.remove(function ( /*error, results*/ ) {
         next();
       });
     },

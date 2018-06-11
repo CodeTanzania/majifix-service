@@ -42,6 +42,7 @@ const fields = [
   'contributors'
 ];
 
+
 /* extract information from package.json */
 const info = _.merge({}, _.pick(pkg, fields));
 

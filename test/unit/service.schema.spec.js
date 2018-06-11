@@ -27,7 +27,6 @@ describe('Service', function () {
       expect(jurisdiction.type.name).to.be.equal('ObjectId');
       expect(jurisdiction.index).to.be.true;
       expect(jurisdiction.exists).to.be.true;
-      expect(jurisdiction.autoset).to.be.true;
 
     });
 
@@ -43,7 +42,6 @@ describe('Service', function () {
       expect(group.type.name).to.be.equal('ObjectId');
       expect(group.index).to.be.true;
       expect(group.exists).to.be.true;
-      expect(group.autoset).to.be.true;
 
     });
 
@@ -59,7 +57,6 @@ describe('Service', function () {
       expect(priority.type.name).to.be.equal('ObjectId');
       expect(priority.index).to.be.true;
       expect(priority.exists).to.be.true;
-      expect(priority.autoset).to.be.true;
 
     });
 
@@ -197,18 +194,52 @@ describe('Service', function () {
 
     });
 
+    describe('flags', function () {
 
-    it('should have isExternal field', function () {
+      it('should be an embedded subdocument', function () {
 
-      const isExternal = Service.schema.tree.isExternal;
-      const instance = Service.schema.paths.isExternal.instance;
+        const flags = Service.schema.tree.flags;
+        const instance = Service.schema.paths.flags.instance;
+        const tree = Service.schema.paths.flags.schema.tree;
 
-      expect(instance).to.be.equal('Boolean');
-      expect(isExternal).to.exist;
-      expect(isExternal).to.be.an('object');
-      expect(isExternal.type).to.be.a('function');
-      expect(isExternal.type.name).to.be.equal('Boolean');
-      expect(isExternal.default).to.be.exist;
+        expect(instance).to.be.equal('Embedded');
+        expect(flags).to.exist;
+        expect(flags).to.be.an('object');
+        expect(tree).to.exist;
+        expect(tree.external).to.exist;
+        expect(tree.account).to.exist;
+
+      });
+
+      it('should have external flag field', function () {
+
+        const schema = Service.schema.paths.flags.schema;
+        const external = schema.tree.external;
+        const instance = schema.paths.external.instance;
+
+        expect(instance).to.be.equal('Boolean');
+        expect(external).to.exist;
+        expect(external).to.be.an('object');
+        expect(external.type).to.be.a('function');
+        expect(external.type.name).to.be.equal('Boolean');
+        expect(external.default).to.be.exist;
+
+      });
+
+      it('should have account flag field', function () {
+
+        const schema = Service.schema.paths.flags.schema;
+        const account = schema.tree.account;
+        const instance = schema.paths.account.instance;
+
+        expect(instance).to.be.equal('Boolean');
+        expect(account).to.exist;
+        expect(account).to.be.an('object');
+        expect(account.type).to.be.a('function');
+        expect(account.type.name).to.be.equal('Boolean');
+        expect(account.default).to.be.exist;
+
+      });
 
     });
 
