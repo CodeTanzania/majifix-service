@@ -1,6 +1,6 @@
 {
-  "name": "majifix-service",
-  "version": "0.1.0",
+  "name": "@codetanzania/majifix-service",
+  "version": "1.0.0",
   "description": "A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction",
   "main": "index.js",
   "scripts": {
@@ -13,11 +13,11 @@
     "url": "https://github.com/CodeTanzania/majifix-service.git"
   },
   "keywords": [
-    "open311",
-    "311",
     "codetanzania",
+    "majifix",
+    "majifix-module",
     "service",
-    "type"
+    "open311"
   ],
   "contributors": [
     {
@@ -38,38 +38,42 @@
   },
   "homepage": "https://github.com/CodeTanzania/majifix-service",
   "sandbox": {
-    "url": "https://majifix-service.herokuapp.com/v0.1.0/services"
+    "url": "https://majifix-service.herokuapp.com/v1/services"
   },
   "devDependencies": {
     "@benmaruchu/faker": "^4.2.1",
     "chai": "^4.1.2",
-    "grunt": "^1.0.2",
+    "grunt": "^1.0.3",
     "grunt-apidoc": "^0.11.0",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
     "mocha": "^5.2.0",
+    "mongoose": "^5.2.1",
     "nodemon": "^1.17.5",
-    "sinon": "^5.0.10",
-    "sinon-chai": "^3.1.0",
-    "sinon-mongoose": "^2.1.1",
+    "sinon": "^6.1.0",
+    "sinon-chai": "^3.2.0",
+    "sinon-mongoose": "^2.2.0",
     "superagent": "^3.8.3",
     "supertest": "^3.1.0"
   },
   "dependencies": {
-    "@codetanzania/majifix-common": "^0.2.0",
-    "@codetanzania/majifix-jurisdiction": "^1.0.0",
+    "@codetanzania/majifix-common": "^0.5.0",
+    "@codetanzania/majifix-jurisdiction": "^1.3.1",
+    "@codetanzania/majifix-priority": "^1.2.0",
+    "@codetanzania/majifix-service-group": "^1.1.0",
     "@lykmapipo/express-common": "^0.6.0",
     "async": "^2.6.1",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
-    "majifix-priority": "git+https://github.com/CodeTanzania/majifix-priority.git#develop",
-    "majifix-service-group": "git+https://github.com/CodeTanzania/majifix-service-group.git#develop",
-    "moment": "^2.22.1",
-    "mongoose": "^5.1.2",
-    "mongoose-locale-schema": "^0.1.0",
-    "mongoose-rest-actions": "^0.12.1",
+    "moment": "^2.22.2",
+    "mongoose-locale-schema": "^0.2.0",
+    "mongoose-rest-actions": "^0.14.0",
     "randomcolor": "^0.5.3"
+  },
+  "engines": {
+    "node": ">=8.11.1",
+    "npm": ">=5.6.0"
   }
 }

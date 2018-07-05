@@ -7,9 +7,12 @@ const faker = require('@benmaruchu/faker');
 function sample(n = 3) {
   return {
     code: faker.finance.account(),
-    name: { en: faker.company.companyName(), sw: faker.company.companyName() },
+    name: { en: faker.hacker.ingverb(), sw: faker.hacker.ingverb() },
     description: { en: faker.lorem.paragraph(), sw: faker.lorem.paragraph() },
-    isExternal: n % 2 > 0 ? true : false
+    flags: {
+      external: (n % 2 > 0 ? true : false),
+      account: (n % 2 > 0 ? true : false)
+    }
   };
 }
 
