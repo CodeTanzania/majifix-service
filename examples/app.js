@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require('@codetanzania/majifix-service-group');
 const { Priority } = require('@codetanzania/majifix-priority');
-const { Service, router, info, app } = require(path.join(__dirname, '..'));
+const { Service, apiVersion, info, app } = require(path.join(__dirname, '..'));
 let samples = require('./samples')(20);
 
 
@@ -96,7 +96,7 @@ function boot() {
     /* fire the app */
     app.start(function (error, env) {
       console.log(
-        `visit http://0.0.0.0:${env.PORT}/v${router.apiVersion}/services`
+        `visit http://0.0.0.0:${env.PORT}/v${apiVersion}/services`
       );
     });
 
