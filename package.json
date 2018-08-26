@@ -1,6 +1,6 @@
 {
   "name": "@codetanzania/majifix-service",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction",
   "main": "index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
     "mocha": "^5.2.0",
-    "mongoose": "^5.2.8",
+    "mongoose": "^5.2.9",
     "nodemon": "^1.18.3",
     "sinon": "^6.1.5",
     "sinon-chai": "^3.2.0",
@@ -59,11 +59,11 @@
     "supertest": "^3.1.0"
   },
   "dependencies": {
-    "@codetanzania/majifix-common": "^0.8.0",
-    "@codetanzania/majifix-jurisdiction": "^1.3.3",
-    "@codetanzania/majifix-priority": "^1.3.0",
-    "@codetanzania/majifix-service-group": "^1.1.2",
-    "@lykmapipo/express-common": "^0.6.0",
+    "@codetanzania/majifix-common": "^0.9.0",
+    "@codetanzania/majifix-jurisdiction": "^1.4.0",
+    "@codetanzania/majifix-priority": "^1.4.0",
+    "@codetanzania/majifix-service-group": "^1.2.0",
+    "@lykmapipo/express-common": "^0.9.1",
     "async": "^2.6.1",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
