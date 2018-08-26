@@ -1,3 +1,7 @@
+# v1.1.0 / 2018-08-26
+- Force latest dependencies
+- Export apiVersion module level
+
 # v1.0.0 / 2018-07-05
 
 - Initial Release
