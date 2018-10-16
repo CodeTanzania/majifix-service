@@ -19,19 +19,19 @@ describe('Service', function () {
     let service;
 
     before(function (done) {
-      Service.remove(done);
+      Service.deleteMany(done);
     });
 
     before(function (done) {
-      ServiceGroup.remove(done);
+      ServiceGroup.deleteMany(done);
     });
 
     before(function (done) {
-      Priority.remove(done);
+      Priority.deleteMany(done);
     });
 
     before(function (done) {
-      Jurisdiction.remove(done);
+      Jurisdiction.deleteMany(done);
     });
 
     before(function (done) {
@@ -212,19 +212,19 @@ describe('Service', function () {
 
 
     after(function (done) {
-      Service.remove(done);
+      Service.deleteMany(done);
     });
 
     after(function (done) {
-      ServiceGroup.remove(done);
+      ServiceGroup.deleteMany(done);
     });
 
     after(function (done) {
-      Priority.remove(done);
+      Priority.deleteMany(done);
     });
 
     after(function (done) {
-      Jurisdiction.remove(done);
+      Jurisdiction.deleteMany(done);
     });
 
   });
