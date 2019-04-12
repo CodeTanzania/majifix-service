@@ -9,74 +9,74 @@ const { ServiceGroup } = require('@codetanzania/majifix-service-group');
 const { Priority } = require('@codetanzania/majifix-priority');
 const { Service } = require(path.join(__dirname, '..', '..'));
 
-describe('Service', function () {
+describe('Service', () => {
 
   let jurisdiction;
   let priority;
   let group;
 
-  before(function (done) {
+  before(done => {
     Service.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     Priority.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     Jurisdiction.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     jurisdiction = Jurisdiction.fake();
-    jurisdiction.post(function (error, created) {
+    jurisdiction.post((error, created) => {
       jurisdiction = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     priority = Priority.fake();
     priority.jurisdiction = jurisdiction;
-    priority.post(function (error, created) {
+    priority.post((error, created) => {
       priority = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     group = ServiceGroup.fake();
     group.jurisdiction = jurisdiction;
-    group.post(function (error, created) {
+    group.post((error, created) => {
       group = created;
       done(error, created);
     });
   });
 
-  describe('get by id', function () {
+  describe('get by id', () => {
 
     let service;
 
-    before(function (done) {
+    before(done => {
       service = Service.fake();
       service.jurisdiction = jurisdiction;
       service.group = group;
       service.priority = priority;
 
       service
-        .post(function (error, created) {
+        .post((error, created) => {
           service = created;
           done(error, created);
         });
     });
 
-    it('should be able to get an instance', function (done) {
+    it('should be able to get an instance', done => {
       Service
-        .getById(service._id, function (error, found) {
+        .getById(service._id, (error, found) => {
           expect(error).to.not.exist;
           expect(found).to.exist;
           expect(found._id).to.eql(service._id);
@@ -84,7 +84,7 @@ describe('Service', function () {
         });
     });
 
-    it('should be able to get with options', function (done) {
+    it('should be able to get with options', done => {
 
       const options = {
         _id: service._id,
@@ -92,7 +92,7 @@ describe('Service', function () {
       };
 
       Service
-        .getById(options, function (error, found) {
+        .getById(options, (error, found) => {
           expect(error).to.not.exist;
           expect(found).to.exist;
           expect(found._id).to.eql(service._id);
@@ -117,12 +117,12 @@ describe('Service', function () {
 
     });
 
-    it('should throw if not exists', function (done) {
+    it('should throw if not exists', done => {
 
       const service = Service.fake();
 
       Service
-        .getById(service._id, function (error, found) {
+        .getById(service._id, (error, found) => {
           expect(error).to.exist;
           expect(error.status).to.exist;
           expect(error.message).to.be.equal('Not Found');
@@ -134,19 +134,19 @@ describe('Service', function () {
 
   });
 
-  after(function (done) {
+  after(done => {
     Service.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Priority.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Jurisdiction.deleteMany(done);
   });
 
