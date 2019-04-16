@@ -9,58 +9,58 @@ const { ServiceGroup } = require('@codetanzania/majifix-service-group');
 const { Priority } = require('@codetanzania/majifix-priority');
 const { Service, apiVersion, app } = require(path.join(__dirname, '..', '..'));
 
-describe('Service', function () {
+describe('Service', () => {
 
-  describe('Rest API', function () {
+  describe('Rest API', () => {
 
     let jurisdiction;
     let priority;
     let group;
     let service;
 
-    before(function (done) {
+    before(done => {
       Service.deleteMany(done);
     });
 
-    before(function (done) {
+    before(done => {
       ServiceGroup.deleteMany(done);
     });
 
-    before(function (done) {
+    before(done => {
       Priority.deleteMany(done);
     });
 
-    before(function (done) {
+    before(done => {
       Jurisdiction.deleteMany(done);
     });
 
-    before(function (done) {
+    before(done => {
       jurisdiction = Jurisdiction.fake();
-      jurisdiction.post(function (error, created) {
+      jurisdiction.post((error, created) => {
         jurisdiction = created;
         done(error, created);
       });
     });
 
-    before(function (done) {
+    before(done => {
       priority = Priority.fake();
       priority.jurisdiction = jurisdiction;
-      priority.post(function (error, created) {
+      priority.post((error, created) => {
         priority = created;
         done(error, created);
       });
     });
 
-    before(function (done) {
+    before(done => {
       group = ServiceGroup.fake();
       group.jurisdiction = jurisdiction;
-      group.post(function (error, created) {
+      group.post((error, created) => {
         group = created;
         done(error, created);
       });
     });
 
-    it('should handle HTTP POST on /services', function (done) {
+    it('should handle HTTP POST on /services', done => {
 
       service = Service.fake();
       service.jurisdiction = jurisdiction;
@@ -73,7 +73,7 @@ describe('Service', function () {
         .set('Content-Type', 'application/json')
         .send(service)
         .expect(201)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -89,14 +89,14 @@ describe('Service', function () {
 
     });
 
-    it('should handle HTTP GET on /services', function (done) {
+    it('should handle HTTP GET on /services', done => {
 
       request(app)
         .get(`/${apiVersion}/services`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -115,13 +115,13 @@ describe('Service', function () {
 
     });
 
-    it('should handle HTTP GET on /services/id:', function (done) {
+    it('should handle HTTP GET on /services/id:', done => {
 
       request(app)
         .get(`/${apiVersion}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -136,7 +136,7 @@ describe('Service', function () {
 
     });
 
-    it('should handle HTTP PATCH on /services/id:', function (done) {
+    it('should handle HTTP PATCH on /services/id:', done => {
 
       const patch = service.fakeOnly('name');
 
@@ -146,7 +146,7 @@ describe('Service', function () {
         .set('Content-Type', 'application/json')
         .send(patch)
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -162,7 +162,7 @@ describe('Service', function () {
 
     });
 
-    it('should handle HTTP PUT on /services/id:', function (done) {
+    it('should handle HTTP PUT on /services/id:', done => {
 
       const put = service.fakeOnly('name');
 
@@ -172,7 +172,7 @@ describe('Service', function () {
         .set('Content-Type', 'application/json')
         .send(put)
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -188,13 +188,13 @@ describe('Service', function () {
 
     });
 
-    it('should handle HTTP DELETE on /services/:id', function (done) {
+    it('should handle HTTP DELETE on /services/:id', done => {
 
       request(app)
         .delete(`/${apiVersion}/services/${service._id}`)
         .set('Accept', 'application/json')
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -211,19 +211,19 @@ describe('Service', function () {
     });
 
 
-    after(function (done) {
+    after(done => {
       Service.deleteMany(done);
     });
 
-    after(function (done) {
+    after(done => {
       ServiceGroup.deleteMany(done);
     });
 
-    after(function (done) {
+    after(done => {
       Priority.deleteMany(done);
     });
 
-    after(function (done) {
+    after(done => {
       Jurisdiction.deleteMany(done);
     });
 

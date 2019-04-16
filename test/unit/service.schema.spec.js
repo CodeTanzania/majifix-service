@@ -11,11 +11,11 @@ const Service =
   require(path.join(__dirname, '..', '..', 'lib', 'service.model'));
 
 
-describe('Service', function () {
+describe('Service', () => {
 
-  describe('Schema', function () {
+  describe('Schema', () => {
 
-    it('should have jurisdiction field', function () {
+    it('should have jurisdiction field', () => {
 
       const jurisdiction = Service.schema.tree.jurisdiction;
       const instance = Service.schema.paths.jurisdiction.instance;
@@ -30,7 +30,7 @@ describe('Service', function () {
 
     });
 
-    it('should have group field', function () {
+    it('should have group field', () => {
 
       const group = Service.schema.tree.group;
       const instance = Service.schema.paths.group.instance;
@@ -45,7 +45,7 @@ describe('Service', function () {
 
     });
 
-    it('should have priority field', function () {
+    it('should have priority field', () => {
 
       const priority = Service.schema.tree.priority;
       const instance = Service.schema.paths.priority.instance;
@@ -60,7 +60,7 @@ describe('Service', function () {
 
     });
 
-    it('should have code field', function () {
+    it('should have code field', () => {
 
       const code = Service.schema.tree.code;
       const instance = Service.schema.paths.code.instance;
@@ -79,9 +79,9 @@ describe('Service', function () {
     });
 
 
-    describe('name', function () {
+    describe('name', () => {
 
-      it('should be an embedded sub-document', function () {
+      it('should be an embedded sub-document', () => {
         const name = Service.schema.tree.name;
         const instance = Service.schema.paths.name.instance;
         const tree = Service.schema.tree.name.tree;
@@ -93,7 +93,7 @@ describe('Service', function () {
         expect(tree.en).to.exist;
       });
 
-      it('should have type `en` locale field', function () {
+      it('should have type `en` locale field', () => {
         const instance =
           Service.schema.paths.name.schema.paths.en.instance;
         const en = Service.schema.tree.name.tree.en;
@@ -113,9 +113,9 @@ describe('Service', function () {
 
     });
 
-    describe('description', function () {
+    describe('description', () => {
 
-      it('should be an embedded sub-document', function () {
+      it('should be an embedded sub-document', () => {
         const description = Service.schema.tree.description;
         const instance = Service.schema.paths.description.instance;
         const tree = Service.schema.tree.description.tree;
@@ -127,7 +127,7 @@ describe('Service', function () {
         expect(tree.en).to.exist;
       });
 
-      it('should have type `en` locale field', function () {
+      it('should have type `en` locale field', () => {
         const instance =
           Service.schema.paths.description.schema.paths.en.instance;
         const en = Service.schema.tree.description.tree.en;
@@ -145,7 +145,7 @@ describe('Service', function () {
 
     });
 
-    it('should have color field', function () {
+    it('should have color field', () => {
 
       const color = Service.schema.tree.color;
       const instance = Service.schema.paths.color.instance;
@@ -160,9 +160,9 @@ describe('Service', function () {
 
     });
 
-    describe('sla', function () {
+    describe('sla', () => {
 
-      it('should be an embedded subdocument', function () {
+      it('should be an embedded subdocument', () => {
 
         const sla = Service.schema.tree.sla;
         const instance = Service.schema.paths.sla.instance;
@@ -176,7 +176,7 @@ describe('Service', function () {
 
       });
 
-      it('should have ttr field', function () {
+      it('should have ttr field', () => {
 
         const schema = Service.schema.paths.sla.schema;
         const ttr = schema.tree.ttr;
@@ -194,9 +194,9 @@ describe('Service', function () {
 
     });
 
-    describe('flags', function () {
+    describe('flags', () => {
 
-      it('should be an embedded subdocument', function () {
+      it('should be an embedded subdocument', () => {
 
         const flags = Service.schema.tree.flags;
         const instance = Service.schema.paths.flags.instance;
@@ -211,7 +211,7 @@ describe('Service', function () {
 
       });
 
-      it('should have external flag field', function () {
+      it('should have external flag field', () => {
 
         const schema = Service.schema.paths.flags.schema;
         const external = schema.tree.external;
@@ -226,7 +226,7 @@ describe('Service', function () {
 
       });
 
-      it('should have account flag field', function () {
+      it('should have account flag field', () => {
 
         const schema = Service.schema.paths.flags.schema;
         const account = schema.tree.account;
