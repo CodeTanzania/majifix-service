@@ -1,6 +1,6 @@
 {
   "name": "@codetanzania/majifix-service",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction",
   "main": "index.js",
   "scripts": {
