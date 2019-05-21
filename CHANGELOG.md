@@ -1,3 +1,20 @@
+#### 1.1.5 (2019-05-21)
+
+##### Chores
+
+- **deps:**
+  - force latest version & audit fix ([26e40c91](https://github.com/CodeTanzania/majifix-service/commit/26e40c9164c1d0fcbdb865c35e9ab88b14d69779))
+  - force latest version & audit fix ([6631ab6c](https://github.com/CodeTanzania/majifix-service/commit/6631ab6c78047224c2fcf1a1206f76a2e9b806e8))
+- reorder dependencies ([64d2b2c0](https://github.com/CodeTanzania/majifix-service/commit/64d2b2c0e71a0e478d7758a494faa72be0042b51))
+- update dependencies ([692fa17a](https://github.com/CodeTanzania/majifix-service/commit/692fa17ab5ac649db54a196b64040f520b950fd0))
+
+##### Refactors
+
+- migrate to use latest dependencies api ([4787ef0a](https://github.com/CodeTanzania/majifix-service/commit/4787ef0a04d0140c4dc9509a5d5d0baf7d1b798a))
+- migrate to use latest dependencies api ([78248d61](https://github.com/CodeTanzania/majifix-service/commit/78248d61d4b54172703b767ed278130cc5be2733))
+- add missing arrow function ([2131d03d](https://github.com/CodeTanzania/majifix-service/commit/2131d03db5a3f4753c50eadfd01c9ff547885a1a))
+- use arrow function ([09164cb7](https://github.com/CodeTanzania/majifix-service/commit/09164cb74e4f166732b946fe5acef84454cc5d98))
+
 #### 1.1.4 (2019-04-12)
 
 ##### Chores

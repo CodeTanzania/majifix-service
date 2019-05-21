@@ -2,6 +2,7 @@
 
 /* dependencies */
 const path = require('path');
+const _ = require('lodash');
 const { expect } = require('chai');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require('@codetanzania/majifix-service-group');
@@ -90,13 +91,13 @@ describe('Service', () => {
 
     it('should throw if not exists', done => {
 
-      const fake = Service.fake();
+      const fake = Service.fake().toObject();
 
       Service
-        .put(fake._id, fake, (error, updated) => {
+        .put(fake._id, _.omit(fake, '_id'), (error, updated) => {
           expect(error).to.exist;
-          expect(error.status).to.exist;
-          expect(error.message).to.be.equal('Not Found');
+          // expect(error.status).to.exist;
+          expect(error.name).to.be.equal('DocumentNotFoundError');
           expect(updated).to.not.exist;
           done();
         });
