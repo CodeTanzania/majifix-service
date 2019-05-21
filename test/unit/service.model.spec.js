@@ -11,16 +11,16 @@ const Service =
   require(path.join(__dirname, '..', '..', 'lib', 'service.model'));
 
 
-describe('Service', function () {
+describe('Service', () => {
 
-  describe('Statics', function () {
+  describe('Statics', () => {
 
-    it('should expose model name as constant', function () {
+    it('should expose model name as constant', () => {
       expect(Service.MODEL_NAME).to.exist;
       expect(Service.MODEL_NAME).to.be.equal('Service');
     });
 
-    it('should expose autopulate as options', function () {
+    it('should expose autopulate as options', () => {
       expect(Service.OPTION_AUTOPOPULATE).to.exist;
       expect(Service.OPTION_AUTOPOPULATE)
         .to.be.eql({
@@ -39,10 +39,10 @@ describe('Service', function () {
   });
 
 
-  describe('open311', function () {
+  describe('open311', () => {
 
     it('should be able to convert service to open311 format',
-      function () {
+      () => {
         const service = Service.fake();
         const object = service.toOpen311();
 

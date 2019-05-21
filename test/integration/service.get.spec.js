@@ -10,62 +10,62 @@ const { ServiceGroup } = require('@codetanzania/majifix-service-group');
 const { Priority } = require('@codetanzania/majifix-priority');
 const { Service } = require(path.join(__dirname, '..', '..'));
 
-describe('Service', function () {
+describe('Service', () => {
 
   let jurisdiction;
   let priority;
   let group;
 
-  before(function (done) {
+  before(done => {
     Service.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     Priority.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     Jurisdiction.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     jurisdiction = Jurisdiction.fake();
-    jurisdiction.post(function (error, created) {
+    jurisdiction.post((error, created) => {
       jurisdiction = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     priority = Priority.fake();
     priority.jurisdiction = jurisdiction;
-    priority.post(function (error, created) {
+    priority.post((error, created) => {
       priority = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     group = ServiceGroup.fake();
     group.jurisdiction = jurisdiction;
-    group.post(function (error, created) {
+    group.post((error, created) => {
       group = created;
       done(error, created);
     });
   });
 
-  describe('get', function () {
+  describe('get', () => {
 
     let services;
 
-    before(function (done) {
+    before(done => {
       const fakes =
-        _.map(Service.fake(32), function (service) {
-          return function (next) {
+        _.map(Service.fake(32), service => {
+          return next => {
             service.jurisdiction = jurisdiction;
             service.group = group;
             service.priority = priority;
@@ -73,16 +73,16 @@ describe('Service', function () {
           };
         });
       async
-        .parallel(fakes, function (error, created) {
+        .parallel(fakes, (error, created) => {
           services = created;
           done(error, created);
         });
     });
 
-    it('should be able to get without options', function (done) {
+    it('should be able to get without options', done => {
 
       Service
-        .get(function (error, results) {
+        .get((error, results) => {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
@@ -105,11 +105,11 @@ describe('Service', function () {
 
     });
 
-    it('should be able to get with options', function (done) {
+    it('should be able to get with options', done => {
 
       const options = { page: 1, limit: 20 };
       Service
-        .get(options, function (error, results) {
+        .get(options, (error, results) => {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
@@ -133,11 +133,11 @@ describe('Service', function () {
     });
 
 
-    it('should be able to search with options', function (done) {
+    it('should be able to search with options', done => {
 
       const options = { filter: { q: services[0].name.en } };
       Service
-        .get(options, function (error, results) {
+        .get(options, (error, results) => {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
@@ -161,10 +161,10 @@ describe('Service', function () {
     });
 
 
-    it('should parse filter options', function (done) {
+    it('should parse filter options', done => {
       const options = { filter: { code: services[0].code } };
       Service
-        .get(options, function (error, results) {
+        .get(options, (error, results) => {
           expect(error).to.not.exist;
           expect(results).to.exist;
           expect(results.data).to.exist;
@@ -189,19 +189,19 @@ describe('Service', function () {
 
   });
 
-  after(function (done) {
+  after(done => {
     Service.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Priority.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Jurisdiction.deleteMany(done);
   });
 
