@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * @name majifix-service
  * @description A representation of an acceptable
@@ -21,16 +18,13 @@
  * app.start()
  */
 
-
 /* dependencies */
-const path = require('path');
-const _ = require('lodash');
-const { app, mount } = require('@lykmapipo/express-common');
-
+import { pkg } from '@lykmapipo/common';
+import Service from './service.model';
+import router from './http.router';
 
 /* declarations */
-const pkg = require(path.join(__dirname, 'package.json'));
-const fields = [
+const info = pkg(
   `${__dirname}/package.json`,
   'name',
   'description',
@@ -41,48 +35,9 @@ const fields = [
   'bugs',
   'sandbox',
   'contributors'
-];
+);
 
+// extract router api version
+const apiVersion = router.version;
 
-/* extract information from package.json */
-const info = _.merge({}, _.pick(pkg, fields));
-
-
-/* import models */
-const Service =
-  require(path.join(__dirname, 'lib', 'service.model'));
-
-
-/* import routers*/
-const router =
-  require(path.join(__dirname, 'lib', 'http.router'));
-
-
-/* export package(module) info */
-exports.info = info;
-
-
-/* export service model */
-exports.Service = Service;
-
-
-/* export service router */
-exports.router = router;
-
-
-/* export router api version */
-exports.apiVersion = router.version;
-
-
-/* export app */
-Object.defineProperty(exports, 'app', {
-  get() {
-
-    //TODO bind oauth middlewares authenticate, token, authorize
-
-    /* bind service router */
-    mount(router);
-    return app;
-  }
-
-});
+export { apiVersion, info, Service, router };
