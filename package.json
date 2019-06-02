@@ -92,6 +92,8 @@
     "@codetanzania/majifix-jurisdiction": ">=1.5.5",
     "@codetanzania/majifix-priority": ">=1.4.5",
     "@codetanzania/majifix-service-group": ">=1.2.6",
+    "@lykmapipo/common": "^0.19.0",
+    "@lykmapipo/env": "^0.7.8",
     "@lykmapipo/express-common": ">=0.17.3",
     "async": ">=3.0.0",
     "express": ">=4.17.0",
