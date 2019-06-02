@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * @apiDefine Service  Service
  *
@@ -14,7 +11,6 @@
  * @version 0.1.0
  * @public
  */
-
 
 /**
  * @apiDefine Service
@@ -39,7 +35,6 @@
  * @apiSuccess {Date} updatedAt Date when service was last updated
  *
  */
-
 
 /**
  * @apiDefine Services
@@ -74,7 +69,6 @@
  *
  */
 
-
 /**
  * @apiDefine ServiceSuccessResponse
  * @apiSuccessExample {json} Success-Response:
@@ -102,7 +96,6 @@
  *       "updatedAt": "2018-05-07T07:24:54.490Z"
  *    }
  */
-
 
 /**
  * @apiDefine ServicesSuccessResponse
@@ -138,29 +131,23 @@
  * }
  */
 
-
 /* dependencies */
-const path = require('path');
-const _ = require('lodash');
-const { getString } = require('@lykmapipo/env');
-const Router = require('@lykmapipo/express-common').Router;
-
+import _ from 'lodash';
+import { getString } from '@lykmapipo/env';
+import { Router } from '@lykmapipo/express-common';
+import Service from './service.model';
 
 /* local constants */
-const API_VERSION = getString('API_VERSION','1.0.0');
-const PATH_OPEN_311 = '/open311/services\.:ext?';
+const API_VERSION = getString('API_VERSION', '1.0.0');
+const PATH_OPEN_311 = '/open311/services.:ext?';
 const PATH_LIST = '/services';
 const PATH_SINGLE = '/services/:id';
 const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/services';
 
-
 /* declarations */
-const Service = require(path.join(__dirname, 'service.model'));
 const router = new Router({
-  version: API_VERSION
+  version: API_VERSION,
 });
-
-
 
 /**
  * @api {get} /services List Services
@@ -179,28 +166,22 @@ const router = new Router({
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.get(PATH_LIST, function getServices(request, response, next) {
-
-  //obtain request options
+  // obtain request options
   const options = _.merge({}, request.mquery);
 
-  Service
-    .get(options, function onGetServices(error, results) {
+  Service.get(options, function onGetServices(error, results) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(results);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(results);
+    }
+  });
 });
-
 
 /**
  * @api {get} /open311/services List Services
@@ -220,48 +201,39 @@ router.get(PATH_LIST, function getServices(request, response, next) {
  * @todo improve documentation
  */
 router.get(PATH_OPEN_311, function getServices(request, response, next) {
+  // obtain request options
+  let options = _.merge({}, request.mquery, {
+    filter: { 'flags.external': true },
+  });
 
-  //obtain request options
-  let options =
-    _.merge({}, request.mquery, { filter: { 'flags.external': true } });
-
-  //obtain provided jurisdiction criteria
+  // obtain provided jurisdiction criteria
   const jurisdiction = _.get(request, 'query.jurisdiction_id');
 
-  //merge & clean options
+  // merge & clean options
   if (!_.isEmpty(jurisdiction)) {
-    options =
-      _.merge({}, options, { filter: { jurisdiction: jurisdiction } });
+    options = _.merge({}, options, { filter: { jurisdiction } });
   }
   options = _.omitBy(options, _.isUndefined);
 
+  Service.get(options, function onGetServices(error, results) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-  Service
-    .get(options, function onGetServices(error, results) {
+    // handle response
+    else {
+      response.status(200);
 
-      //forward error
-      if (error) {
-        next(error);
-      }
+      // map services to open311 compliant service list
+      const services = _.map(results.data, function cb(service) {
+        return service.toOpen311();
+      });
 
-      //handle response
-      else {
-        response.status(200);
-
-        //map services to open311 compliant service list
-        const services = _.map(results.data, function (service) {
-          return service.toOpen311();
-        });
-
-        response.json(services);
-
-      }
-
-    });
-
+      response.json(services);
+    }
+  });
 });
-
-
 
 /**
  * @api {post} /services Create New Service
@@ -280,29 +252,22 @@ router.get(PATH_OPEN_311, function getServices(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.post(PATH_LIST, function postService(request, response, next) {
-
-  //obtain request body
+  // obtain request body
   const body = _.merge({}, request.body);
 
-  Service
-    .post(body, function onPostService(error, created) {
+  Service.post(body, function onPostService(error, created) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(201);
-        response.json(created);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(201);
+      response.json(created);
+    }
+  });
 });
-
-
 
 /**
  * @api {get} /services/:id Get Existing Service
@@ -321,31 +286,25 @@ router.post(PATH_LIST, function postService(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.get(PATH_SINGLE, function getService(request, response, next) {
-
-  //obtain request options
+  // obtain request options
   const options = _.merge({}, request.mquery);
 
-  //obtain service id
-  options._id = request.params.id;
+  // obtain service id
+  options._id = request.params.id; // eslint-disable-line no-underscore-dangle
 
-  Service
-    .getById(options, function onGetService(error, found) {
+  Service.getById(options, function onGetService(error, found) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(found);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(found);
+    }
+  });
 });
-
 
 /**
  * @api {patch} /services/:id Patch Existing Service
@@ -364,32 +323,25 @@ router.get(PATH_SINGLE, function getService(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.patch(PATH_SINGLE, function patchService(request, response, next) {
-
-  //obtain service id
+  // obtain service id
   const { id } = request.params;
 
-  //obtain request body
+  // obtain request body
   const patches = _.merge({}, request.body);
 
-  Service
-    .patch(id, patches, function onPatchService(error, patched) {
+  Service.patch(id, patches, function onPatchService(error, patched) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(patched);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(patched);
+    }
+  });
 });
-
-
 
 /**
  * @api {put} /services/:id Put Existing Service
@@ -408,32 +360,25 @@ router.patch(PATH_SINGLE, function patchService(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.put(PATH_SINGLE, function putService(request, response, next) {
-
-  //obtain service id
+  // obtain service id
   const { id } = request.params;
 
-  //obtain request body
+  // obtain request body
   const updates = _.merge({}, request.body);
 
-  Service
-    .put(id, updates, function onPutService(error, updated) {
+  Service.put(id, updates, function onPutService(error, updated) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(updated);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(updated);
+    }
+  });
 });
-
-
 
 /**
  * @api {delete} /services/:id Delete Existing Service
@@ -452,29 +397,22 @@ router.put(PATH_SINGLE, function putService(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.delete(PATH_SINGLE, function deleteService(request, response, next) {
-
-  //obtain service id
+  // obtain service id
   const { id } = request.params;
 
-  Service
-    .del(id, function onDeleteService(error, deleted) {
+  Service.del(id, function onDeleteService(error, deleted) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(deleted);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(deleted);
+    }
+  });
 });
-
-
 
 /**
  * @api {get} /jurisdictions/:jurisdiction/services List Jurisdiction Services
@@ -493,34 +431,24 @@ router.delete(PATH_SINGLE, function deleteService(request, response, next) {
  * @apiUse AuthorizationHeaderErrorExample
  */
 router.get(PATH_JURISDICTION, function getServices(request, response, next) {
-
-  //obtain request options
+  // obtain request options
   const { jurisdiction } = request.params;
-  const filter =
-    (jurisdiction ? { filter: { jurisdiction: jurisdiction } } : {});
-  const options =
-    _.merge({}, filter, request.mquery);
+  const filter = jurisdiction ? { filter: { jurisdiction } } : {};
+  const options = _.merge({}, filter, request.mquery);
 
+  Service.get(options, function onGetServices(error, found) {
+    // forward error
+    if (error) {
+      next(error);
+    }
 
-  Service
-    .get(options, function onGetServices(error, found) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(found);
-      }
-
-    });
-
+    // handle response
+    else {
+      response.status(200);
+      response.json(found);
+    }
+  });
 });
 
-
-
 /* expose router */
-module.exports = router;
+export default router;
