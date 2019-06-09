@@ -102,7 +102,8 @@
     "moment": ">=2.24.0",
     "mongoose-locale-schema": ">=0.3.1",
     "mongoose-rest-actions": ">=0.28.1",
-    "randomcolor": ">=0.5.4"
+    "randomcolor": ">=0.5.4",
+    "winston": "^3.2.1"
   },
   "peerDependencies": {
     "mongoose": ">=5.5.10"
