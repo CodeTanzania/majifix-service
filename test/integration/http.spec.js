@@ -1,67 +1,27 @@
-'use strict';
-
 /* dependencies */
-const path = require('path');
-const request = require('supertest');
-const { expect } = require('chai');
-const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
-const { ServiceGroup } = require('@codetanzania/majifix-service-group');
-const { Priority } = require('@codetanzania/majifix-priority');
-const { Service, apiVersion, app } = require(path.join(__dirname, '..', '..'));
+import request from 'supertest';
+import { expect } from 'chai';
+import { app, mount } from '@lykmapipo/express-common';
+import { clear, create } from '@lykmapipo/mongoose-test-helpers';
+import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
+import { ServiceGroup } from '@codetanzania/majifix-service-group';
+import { Priority } from '@codetanzania/majifix-priority';
+import { Service, apiVersion, router } from '../../src';
 
 describe('Service', () => {
+  mount(router);
 
   describe('Rest API', () => {
-
-    let jurisdiction;
-    let priority;
-    let group;
     let service;
+    const jurisdiction = Jurisdiction.fake();
+    const priority = Priority.fake();
+    const group = ServiceGroup.fake();
 
-    before(done => {
-      Service.deleteMany(done);
-    });
+    before(done => clear(Jurisdiction, Priority, ServiceGroup, done));
 
-    before(done => {
-      ServiceGroup.deleteMany(done);
-    });
-
-    before(done => {
-      Priority.deleteMany(done);
-    });
-
-    before(done => {
-      Jurisdiction.deleteMany(done);
-    });
-
-    before(done => {
-      jurisdiction = Jurisdiction.fake();
-      jurisdiction.post((error, created) => {
-        jurisdiction = created;
-        done(error, created);
-      });
-    });
-
-    before(done => {
-      priority = Priority.fake();
-      priority.jurisdiction = jurisdiction;
-      priority.post((error, created) => {
-        priority = created;
-        done(error, created);
-      });
-    });
-
-    before(done => {
-      group = ServiceGroup.fake();
-      group.jurisdiction = jurisdiction;
-      group.post((error, created) => {
-        group = created;
-        done(error, created);
-      });
-    });
+    before(done => create(jurisdiction, priority, group, done));
 
     it('should handle HTTP POST on /services', done => {
-
       service = Service.fake();
       service.jurisdiction = jurisdiction;
       service.group = group;
@@ -84,13 +44,10 @@ describe('Service', () => {
           expect(created.name.en).to.exist;
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP GET on /services', done => {
-
       request(app)
         .get(`/${apiVersion}/services`)
         .set('Accept', 'application/json')
@@ -100,7 +57,7 @@ describe('Service', () => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
-          //assert payload
+          // assert payload
           const result = response.body;
           expect(result.data).to.exist;
           expect(result.total).to.exist;
@@ -110,13 +67,10 @@ describe('Service', () => {
           expect(result.pages).to.exist;
           expect(result.lastModified).to.exist;
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP GET on /services/id:', done => {
-
       request(app)
         .get(`/${apiVersion}/services/${service._id}`)
         .set('Accept', 'application/json')
@@ -131,13 +85,10 @@ describe('Service', () => {
           expect(found.name.en).to.be.equal(service.name.en);
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP PATCH on /services/id:', done => {
-
       const patch = service.fakeOnly('name');
 
       request(app)
@@ -157,13 +108,10 @@ describe('Service', () => {
           expect(patched.name.en).to.be.equal(service.name.en);
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP PUT on /services/id:', done => {
-
       const put = service.fakeOnly('name');
 
       request(app)
@@ -183,13 +131,10 @@ describe('Service', () => {
           expect(updated.name.en).to.be.equal(service.name.en);
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP DELETE on /services/:id', done => {
-
       request(app)
         .delete(`/${apiVersion}/services/${service._id}`)
         .set('Accept', 'application/json')
@@ -205,28 +150,11 @@ describe('Service', () => {
           expect(deleted.name.en).to.be.equal(service.name.en);
 
           done(error, response);
-
         });
-
     });
 
-
-    after(done => {
-      Service.deleteMany(done);
-    });
-
-    after(done => {
-      ServiceGroup.deleteMany(done);
-    });
-
-    after(done => {
-      Priority.deleteMany(done);
-    });
-
-    after(done => {
-      Jurisdiction.deleteMany(done);
-    });
-
+    after(done =>
+      clear('Jurisdiction', 'Priority', 'Service', 'ServiceGroup', done)
+    );
   });
-
 });
