@@ -19,6 +19,8 @@
  * which this service belongs
  * @apiSuccess {String} [group = undefined] service group under which this
  * service belongs
+ * @apiSuccess {String} [type = undefined] service type under which this
+ * service belongs
  * @apiSuccess {String} [priority = undefined]  A default priority
  * of the service. It assigned to service request if no priority set.
  * @apiSuccess {String} code A unique identifier of the service
@@ -43,6 +45,8 @@
  * @apiSuccess {String} [data.jurisdiction = undefined] jurisdiction under
  * which this service belongs
  * @apiSuccess {String} [data.group = undefined] service group under which this
+ * service belongs
+ * @apiSuccess {String} [data.type = undefined] service type under which this
  * service belongs
  * @apiSuccess {String} [data.priority = undefined]  A default priority
  * of the service. It assigned to service request if no priority set.
@@ -83,6 +87,10 @@
  *         "_id": "5af2fe3ea937a3238bd8e64b",
  *         "code": "4685",
  *         "name": "Gana"
+ *       },
+ *       "type": {
+ *         "_id": "5af2fe3ea937a3238bd8e74a",
+ *         "name": { "en" : "Request" }
  *       },
  *       "code": "05817253",
  *       "name": {
