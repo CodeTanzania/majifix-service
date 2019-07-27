@@ -1,8 +1,8 @@
-/* dependencies */
 import request from 'supertest';
 import { expect } from 'chai';
 import { app, mount } from '@lykmapipo/express-common';
 import { clear, create } from '@lykmapipo/mongoose-test-helpers';
+import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
@@ -16,15 +16,17 @@ describe('Service', () => {
     const jurisdiction = Jurisdiction.fake();
     const priority = Priority.fake();
     const group = ServiceGroup.fake();
+    const type = Predefine.fake();
 
-    before(done => clear(Jurisdiction, Priority, ServiceGroup, done));
+    before(done => clear(done));
 
-    before(done => create(jurisdiction, priority, group, done));
+    before(done => create(jurisdiction, priority, group, type, done));
 
     it('should handle HTTP POST on /services', done => {
       service = Service.fake();
       service.jurisdiction = jurisdiction;
       service.group = group;
+      service.type = type;
       service.priority = priority;
 
       request(app)
@@ -153,8 +155,6 @@ describe('Service', () => {
         });
     });
 
-    after(done =>
-      clear('Jurisdiction', 'Priority', 'Service', 'ServiceGroup', done)
-    );
+    after(done => clear(done));
   });
 });

@@ -25,13 +25,20 @@
 /* dependencies */
 import _ from 'lodash';
 import async from 'async';
-import randomColor from 'randomcolor';
-import mongoose from 'mongoose';
+import { randomColor } from '@lykmapipo/common';
+import { getString, getStrings } from '@lykmapipo/env';
+import { Schema, ObjectId, model } from '@lykmapipo/mongoose-common';
+
 import actions from 'mongoose-rest-actions';
 import localize from 'mongoose-locale-schema';
 
-import { schema, models } from '@codetanzania/majifix-common';
-import { getString, getStrings } from '@lykmapipo/env';
+import {
+  schema,
+  models,
+  PREDEFINE_NAMESPACE_SERVICETYPE,
+  PREDEFINE_BUCKET_SERVICETYPE,
+} from '@codetanzania/majifix-common';
+import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
@@ -39,14 +46,12 @@ import Sla from './sla.schema';
 import Flags from './flags.schema';
 import open311 from './open311.plugin';
 
-const { Schema } = mongoose;
-const { ObjectId } = Schema.Types;
-
 /* constants */
 const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
 const LOCALES = getStrings('LOCALES', ['en']);
 const JURISDICTION_PATH = 'jurisdiction';
 const SERVICEGROUP_PATH = 'group';
+const SERVICETYPE_PATH = 'type';
 const PRIORITY_PATH = 'priority';
 const { POPULATION_MAX_DEPTH } = schema;
 const SCHEMA_OPTIONS = { timestamps: true, emitIndexErrors: true };
@@ -133,6 +138,30 @@ const ServiceSchema = new Schema(
       required: true,
       exists: true,
       autopopulate: ServiceGroup.OPTION_AUTOPOPULATE,
+      index: true,
+    },
+
+    /**
+     * @name type
+     * @description A service type under which a service belongs to
+     *
+     * @type {object}
+     * @property {object} type - schema(data) type
+     * @property {string} ref - referenced collection
+     * @property {boolean} required - mark required
+     * @property {boolean} exists - ensure ref exists before save
+     * @property {object} autopopulate - jurisdiction population options
+     * @property {boolean} index - ensure database index
+     * @since 1.2.0
+     * @version 0.1.0
+     * @instance
+     */
+    type: {
+      type: ObjectId,
+      ref: Predefine.MODEL_NAME,
+      // required: true,
+      exists: true,
+      autopopulate: Predefine.OPTION_AUTOPOPULATE,
       index: true,
     },
 
@@ -269,9 +298,7 @@ const ServiceSchema = new Schema(
       type: String,
       trim: true,
       uppercase: true,
-      default() {
-        return randomColor().toUpperCase();
-      },
+      default: () => randomColor(),
       fake: true,
     },
 
@@ -464,7 +491,7 @@ ServiceSchema.methods.beforePost = function beforePost(done) {
         }
       }.bind(this),
 
-      // 1...preload service group
+      // 2...preload service group
       group: function preloadServiceGroup(next) {
         // ensure service group is pre loaded before post(save)
         const groupId = this.group ? this.group._id : this.group; // eslint-disable-line no-underscore-dangle
@@ -491,7 +518,39 @@ ServiceSchema.methods.beforePost = function beforePost(done) {
         }
       }.bind(this),
 
-      // 1...preload priority
+      // 2...preload service type
+      type: function preloadServiceType(next) {
+        // ensure service type is pre loaded before post(save)
+        const typeId = this.type ? this.type._id : this.type; // eslint-disable-line no-underscore-dangle
+        const criteria = {
+          _id: typeId,
+          namespace: PREDEFINE_NAMESPACE_SERVICETYPE,
+          bucket: PREDEFINE_BUCKET_SERVICETYPE,
+        };
+
+        // prefetch existing type
+        if (typeId) {
+          Predefine.getOneOrDefault(
+            criteria,
+            function cb(error, type) {
+              // assign existing type
+              if (type) {
+                this.type = type;
+              }
+
+              // return
+              next(error, this);
+            }.bind(this)
+          );
+        }
+
+        // continue
+        else {
+          next();
+        }
+      }.bind(this),
+
+      // 3...preload priority
       priority: function preloadPriority(next) {
         // ensure priority is pre loaded before post(save)
         const priorityId = this.priority ? this.priority._id : this.priority; // eslint-disable-line no-underscore-dangle
@@ -551,6 +610,14 @@ ServiceSchema.methods.afterPost = function afterPost(done) {
   );
   this.populate(group);
 
+  // ensure service type is populated after post(save)
+  const type = _.merge(
+    {},
+    { path: SERVICETYPE_PATH },
+    Predefine.OPTION_AUTOPOPULATE
+  );
+  this.populate(type);
+
   // ensure priority is populated after post(save)
   const priority = _.merge(
     {},
@@ -582,4 +649,4 @@ ServiceSchema.plugin(open311);
 ServiceSchema.plugin(actions);
 
 /* export service model */
-export default mongoose.model(SERVICE_MODEL_NAME, ServiceSchema);
+export default model(SERVICE_MODEL_NAME, ServiceSchema);

@@ -32,6 +32,19 @@ describe('Service', () => {
       expect(group.exists).to.be.true;
     });
 
+    it('should have type field', () => {
+      const { type } = Service.schema.tree;
+      const { instance } = Service.schema.paths.type;
+
+      expect(instance).to.be.equal('ObjectID');
+      expect(type).to.exist;
+      expect(type).to.be.an('object');
+      expect(type.type).to.be.a('function');
+      expect(type.type.name).to.be.equal('ObjectId');
+      expect(type.index).to.be.true;
+      expect(type.exists).to.be.true;
+    });
+
     it('should have priority field', () => {
       const { priority } = Service.schema.tree;
       const { instance } = Service.schema.paths.priority;

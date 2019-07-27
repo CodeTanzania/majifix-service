@@ -10,7 +10,7 @@
     "build": "rollup -c",
     "lint": "eslint --fix --ext .js src/ test/ rollup.config.js",
     "pretest": "npm run lint",
-    "test": "NODE_ENV=test mocha --exit --require @babel/register test/**/*.spec.js",
+    "test": "NODE_ENV=test mocha --timeout 8000 --exit --require @babel/register test/**/*.spec.js",
     "dev": "npm run seed && npm run start",
     "start": "BASE_PATH=./examples node ./examples/app.js",
     "seed": "BASE_PATH=./examples node ./examples/seed.js",
@@ -90,15 +90,15 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
-    "@codetanzania/majifix-common": ">=0.12.4",
+    "@codetanzania/majifix-common": ">=0.13.0",
     "@codetanzania/majifix-jurisdiction": ">=1.5.5",
     "@codetanzania/majifix-priority": ">=1.4.5",
     "@codetanzania/majifix-service-group": ">=1.2.6",
-    "@lykmapipo/common": "^0.24.1",
-    "@lykmapipo/env": "^0.11.1",
+    "@lykmapipo/common": ">=0.24.1",
+    "@lykmapipo/env": ">=0.11.1",
     "@lykmapipo/express-common": ">=0.17.9",
-    "@lykmapipo/mongoose-common": "^0.25.8",
-    "@lykmapipo/predefine": "^0.5.0",
+    "@lykmapipo/mongoose-common": ">=0.25.8",
+    "@lykmapipo/predefine": ">=0.6.0",
     "async": ">=3.1.0",
     "express": ">=4.17.1",
     "lodash": ">=4.17.15",
@@ -106,7 +106,7 @@
     "mongoose-locale-schema": ">=0.3.4",
     "mongoose-rest-actions": ">=0.28.6",
     "randomcolor": ">=0.5.4",
-    "winston": "^3.2.1"
+    "winston": ">=3.2.1"
   },
   "peerDependencies": {
     "mongoose": ">=5.6.7"
