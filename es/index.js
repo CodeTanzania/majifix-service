@@ -1,12 +1,22 @@
-import { pkg } from '@lykmapipo/common';
+import { randomColor, pkg } from '@lykmapipo/common';
 import _ from 'lodash';
 import async from 'async';
-import randomColor from 'randomcolor';
-import mongoose, { Schema as Schema$1 } from 'mongoose';
+import { getString, getStrings } from '@lykmapipo/env';
+import {
+  createSubSchema,
+  model,
+  Schema,
+  ObjectId,
+} from '@lykmapipo/mongoose-common';
 import actions from 'mongoose-rest-actions';
 import localize from 'mongoose-locale-schema';
-import { schema, models } from '@codetanzania/majifix-common';
-import { getString, getStrings } from '@lykmapipo/env';
+import {
+  models,
+  PREDEFINE_NAMESPACE_SERVICETYPE,
+  PREDEFINE_BUCKET_SERVICETYPE,
+  schema,
+} from '@codetanzania/majifix-common';
+import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
@@ -26,39 +36,33 @@ import { Router } from '@lykmapipo/express-common';
  * @version 0.1.0
  */
 
-/* declarations */
-const { SUB_DOC_SCHEMA_OPTIONS } = schema;
-
 /**
  * @name SlaSchema
  * @type {Schema}
  * @private
  */
-const SlaSchema = new Schema$1(
-  {
-    /**
-     * @name ttr
-     * @description time required in hours to resolve(mark as done)
-     * a service request(issue)
-     *
-     * @type {object}
-     * @property {object} type - schema(data) type
-     * @property {boolean} index - ensure database index
-     * @property {boolean} default - default value set when none provided
-     * @property {object} fake - fake data generator options
-     * @since 0.1.0
-     * @version 0.1.0
-     * @instance
-     */
-    ttr: {
-      type: Number,
-      index: true,
-      default: 0,
-      fake: true,
-    },
+const SlaSchema = createSubSchema({
+  /**
+   * @name ttr
+   * @description time required in hours to resolve(mark as done)
+   * a service request(issue)
+   *
+   * @type {object}
+   * @property {object} type - schema(data) type
+   * @property {boolean} index - ensure database index
+   * @property {boolean} default - default value set when none provided
+   * @property {object} fake - fake data generator options
+   * @since 0.1.0
+   * @version 0.1.0
+   * @instance
+   */
+  ttr: {
+    type: Number,
+    index: true,
+    default: 0,
+    fake: true,
   },
-  SUB_DOC_SCHEMA_OPTIONS
-);
+});
 
 /**
  * @module flags
@@ -73,64 +77,58 @@ const SlaSchema = new Schema$1(
  * @version 0.1.0
  */
 
-/* declarations */
-const { SUB_DOC_SCHEMA_OPTIONS: SUB_DOC_SCHEMA_OPTIONS$1 } = schema;
-
 /**
  * @name FlagsSchema
  * @type {Schema}
  * @private
  */
-const FlagsSchema = new Schema$1(
-  {
-    /**
-     * @name external
-     * @description Flag if a service can be reported via external(or public)
-     * channels i.e mobile app, USSD, public website, chat bot etc.
-     *
-     * Its also applicable when a jurisdiction will want generic service to be
-     * exposed to public while maintaining specific services internally.
-     *
-     * @type {object}
-     * @property {object} type - schema(data) type
-     * @property {boolean} index - ensure database index
-     * @property {boolean} default - default value set when none provided
-     * @property {object} fake - fake data generator options
-     * @since 0.1.0
-     * @version 0.1.0
-     * @instance
-     */
-    external: {
-      type: Boolean,
-      index: true,
-      default: false,
-      fake: true,
-    },
-
-    /**
-     * @name account
-     * @description Flag if a service requires an account for it to be
-     * handled. e.g billing service request may require a customer
-     * account number.
-     *
-     * @type {object}
-     * @property {object} type - schema(data) type
-     * @property {boolean} index - ensure database index
-     * @property {boolean} default - default value set when none provided
-     * @property {object} fake - fake data generator options
-     * @since 0.1.0
-     * @version 0.1.0
-     * @instance
-     */
-    account: {
-      type: Boolean,
-      index: true,
-      default: false,
-      fake: true,
-    },
+const FlagsSchema = createSubSchema({
+  /**
+   * @name external
+   * @description Flag if a service can be reported via external(or public)
+   * channels i.e mobile app, USSD, public website, chat bot etc.
+   *
+   * Its also applicable when a jurisdiction will want generic service to be
+   * exposed to public while maintaining specific services internally.
+   *
+   * @type {object}
+   * @property {object} type - schema(data) type
+   * @property {boolean} index - ensure database index
+   * @property {boolean} default - default value set when none provided
+   * @property {object} fake - fake data generator options
+   * @since 0.1.0
+   * @version 0.1.0
+   * @instance
+   */
+  external: {
+    type: Boolean,
+    index: true,
+    default: false,
+    fake: true,
   },
-  SUB_DOC_SCHEMA_OPTIONS$1
-);
+
+  /**
+   * @name account
+   * @description Flag if a service requires an account for it to be
+   * handled. e.g billing service request may require a customer
+   * account number.
+   *
+   * @type {object}
+   * @property {object} type - schema(data) type
+   * @property {boolean} index - ensure database index
+   * @property {boolean} default - default value set when none provided
+   * @property {object} fake - fake data generator options
+   * @since 0.1.0
+   * @version 0.1.0
+   * @instance
+   */
+  account: {
+    type: Boolean,
+    index: true,
+    default: false,
+    fake: true,
+  },
+});
 
 /**
  * @module open311
@@ -259,14 +257,12 @@ function open311Plugin(schema) {
  * @public
  */
 
-const { Schema } = mongoose;
-const { ObjectId } = Schema.Types;
-
 /* constants */
 const DEFAULT_LOCALE$1 = getString('DEFAULT_LOCALE', 'en');
 const LOCALES = getStrings('LOCALES', ['en']);
 const JURISDICTION_PATH = 'jurisdiction';
 const SERVICEGROUP_PATH = 'group';
+const SERVICETYPE_PATH = 'type';
 const PRIORITY_PATH = 'priority';
 const { POPULATION_MAX_DEPTH } = schema;
 const SCHEMA_OPTIONS = { timestamps: true, emitIndexErrors: true };
@@ -353,6 +349,30 @@ const ServiceSchema = new Schema(
       required: true,
       exists: true,
       autopopulate: ServiceGroup.OPTION_AUTOPOPULATE,
+      index: true,
+    },
+
+    /**
+     * @name type
+     * @description A service type under which a service belongs to
+     *
+     * @type {object}
+     * @property {object} type - schema(data) type
+     * @property {string} ref - referenced collection
+     * @property {boolean} required - mark required
+     * @property {boolean} exists - ensure ref exists before save
+     * @property {object} autopopulate - jurisdiction population options
+     * @property {boolean} index - ensure database index
+     * @since 1.2.0
+     * @version 0.1.0
+     * @instance
+     */
+    type: {
+      type: ObjectId,
+      ref: Predefine.MODEL_NAME,
+      // required: true,
+      exists: true,
+      autopopulate: Predefine.OPTION_AUTOPOPULATE,
       index: true,
     },
 
@@ -489,9 +509,7 @@ const ServiceSchema = new Schema(
       type: String,
       trim: true,
       uppercase: true,
-      default() {
-        return randomColor().toUpperCase();
-      },
+      default: () => randomColor(),
       fake: true,
     },
 
@@ -684,7 +702,7 @@ ServiceSchema.methods.beforePost = function beforePost(done) {
         }
       }.bind(this),
 
-      // 1...preload service group
+      // 2...preload service group
       group: function preloadServiceGroup(next) {
         // ensure service group is pre loaded before post(save)
         const groupId = this.group ? this.group._id : this.group; // eslint-disable-line no-underscore-dangle
@@ -711,7 +729,39 @@ ServiceSchema.methods.beforePost = function beforePost(done) {
         }
       }.bind(this),
 
-      // 1...preload priority
+      // 2...preload service type
+      type: function preloadServiceType(next) {
+        // ensure service type is pre loaded before post(save)
+        const typeId = this.type ? this.type._id : this.type; // eslint-disable-line no-underscore-dangle
+        const criteria = {
+          _id: typeId,
+          namespace: PREDEFINE_NAMESPACE_SERVICETYPE,
+          bucket: PREDEFINE_BUCKET_SERVICETYPE,
+        };
+
+        // prefetch existing type
+        if (typeId) {
+          Predefine.getOneOrDefault(
+            criteria,
+            function cb(error, type) {
+              // assign existing type
+              if (type) {
+                this.type = type;
+              }
+
+              // return
+              next(error, this);
+            }.bind(this)
+          );
+        }
+
+        // continue
+        else {
+          next();
+        }
+      }.bind(this),
+
+      // 3...preload priority
       priority: function preloadPriority(next) {
         // ensure priority is pre loaded before post(save)
         const priorityId = this.priority ? this.priority._id : this.priority; // eslint-disable-line no-underscore-dangle
@@ -771,6 +821,14 @@ ServiceSchema.methods.afterPost = function afterPost(done) {
   );
   this.populate(group);
 
+  // ensure service type is populated after post(save)
+  const type = _.merge(
+    {},
+    { path: SERVICETYPE_PATH },
+    Predefine.OPTION_AUTOPOPULATE
+  );
+  this.populate(type);
+
   // ensure priority is populated after post(save)
   const priority = _.merge(
     {},
@@ -802,7 +860,7 @@ ServiceSchema.plugin(open311Plugin);
 ServiceSchema.plugin(actions);
 
 /* export service model */
-var Service = mongoose.model(SERVICE_MODEL_NAME, ServiceSchema);
+var Service = model(SERVICE_MODEL_NAME, ServiceSchema);
 
 /**
  * @apiDefine Service  Service
