@@ -76,6 +76,7 @@ connect(err => {
           sample.jurisdiction = jurisdiction;
           sample.priority = priority;
           sample.group = group;
+          sample.flags = { external: _.sample([true, false]) };
           return sample;
         });
 

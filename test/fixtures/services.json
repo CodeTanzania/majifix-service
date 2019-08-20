@@ -1,0 +1,15 @@
+[
+  {
+    "_id": "5d535a0a62b47901d3294ff8",
+    "jurisdiction": "5d535a0a62b47901d3294ff8",
+    "group": "5d535a0a62b47901d3294ff8",
+    "priority": "5d535a0a62b47901d3294ff8",
+    "name": { "en": "Water Leakage" },
+    "code": "C",
+    "color": "#BACFFC",
+    "description": {
+      "en": "Ad et adipisci voluptatem. Consequatur excepturi fuga. Odit quod amet"
+    },
+    "default": true
+  }
+]

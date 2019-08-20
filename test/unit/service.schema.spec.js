@@ -1,7 +1,5 @@
-/* dependencies */
-import { expect } from 'chai';
-
-/* declarations */
+import { SchemaTypes } from '@lykmapipo/mongoose-common';
+import { expect } from '@lykmapipo/mongoose-test-helpers';
 import Service from '../../src/service.model';
 
 describe('Service', () => {
@@ -16,7 +14,8 @@ describe('Service', () => {
       expect(jurisdiction.type).to.be.a('function');
       expect(jurisdiction.type.name).to.be.equal('ObjectId');
       expect(jurisdiction.index).to.be.true;
-      expect(jurisdiction.exists).to.be.true;
+      expect(jurisdiction.exists).to.be.exist.and.be.an('object');
+      expect(jurisdiction.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have group field', () => {
@@ -29,7 +28,8 @@ describe('Service', () => {
       expect(group.type).to.be.a('function');
       expect(group.type.name).to.be.equal('ObjectId');
       expect(group.index).to.be.true;
-      expect(group.exists).to.be.true;
+      expect(group.exists).to.be.exist.and.be.an('object');
+      expect(group.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have type field', () => {
@@ -42,7 +42,8 @@ describe('Service', () => {
       expect(type.type).to.be.a('function');
       expect(type.type.name).to.be.equal('ObjectId');
       expect(type.index).to.be.true;
-      expect(type.exists).to.be.true;
+      expect(type.exists).to.be.exist.and.be.an('object');
+      expect(type.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have priority field', () => {
@@ -55,7 +56,8 @@ describe('Service', () => {
       expect(priority.type).to.be.a('function');
       expect(priority.type.name).to.be.equal('ObjectId');
       expect(priority.index).to.be.true;
-      expect(priority.exists).to.be.true;
+      expect(priority.exists).to.be.exist.and.be.an('object');
+      expect(priority.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have code field', () => {
@@ -211,6 +213,20 @@ describe('Service', () => {
         expect(account.type.name).to.be.equal('Boolean');
         expect(account.default).to.be.exist;
       });
+    });
+
+    it('should have default field', () => {
+      const isDefault = Service.path('default');
+
+      expect(isDefault).to.exist;
+      expect(isDefault).to.be.instanceof(SchemaTypes.Boolean);
+      expect(isDefault.options).to.exist;
+      expect(isDefault.options).to.be.an('object');
+      expect(isDefault.options.type).to.exist;
+      expect(isDefault.options.index).to.be.true;
+      expect(isDefault.options.exportable).to.be.true;
+      expect(isDefault.options.default).to.be.false;
+      expect(isDefault.options.fake).to.exist;
     });
   });
 });

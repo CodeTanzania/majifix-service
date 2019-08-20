@@ -23,7 +23,7 @@ const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
  * @description flat a given object to unlocalized object
  * @param {string} path prefix to used on unlocalized key
  * @param {object} data object to unlocalized
- * @return {object}
+ * @returns {object} unlocalized path
  *
  * @since 0.1.0
  * @version 0.1.0
@@ -55,15 +55,25 @@ function unlocalize(path, data) {
 }
 
 /* implementation */
+
+/**
+ * @function open311Plugin
+ * @name open311Plugin
+ * @description extend service request with open311 methods
+ * @param {object} schema valid service request schema
+ *
+ * @since 0.1.0
+ * @version 0.1.0
+ */
 export default function open311Plugin(schema) {
   /**
    * @name toOpen311
    * @description convert service instance to Open311 compliant schema
-   * @return {object} open311 compliant service instance
+   * @returns {object} open311 compliant service instance
    *
    * @since 0.1.0
    * @version 0.1.0
-   * @type {function}
+   * @type {Function}
    * @instance
    */
   // eslint-disable-next-line no-param-reassign

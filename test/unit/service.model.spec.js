@@ -1,7 +1,4 @@
-/* dependencies */
-import { expect } from 'chai';
-
-/* declarations */
+import { expect } from '@lykmapipo/mongoose-test-helpers';
 import Service from '../../src/service.model';
 
 describe('Service', () => {
@@ -9,6 +6,18 @@ describe('Service', () => {
     it('should expose model name as constant', () => {
       expect(Service.MODEL_NAME).to.exist;
       expect(Service.MODEL_NAME).to.be.equal('Service');
+    });
+
+    it('should expose select as options', () => {
+      expect(Service.OPTION_SELECT).to.exist;
+      expect(Service.OPTION_SELECT).to.be.eql({
+        jurisdiction: 1,
+        group: 1,
+        priority: 1,
+        code: 1,
+        name: 1,
+        color: 1,
+      });
     });
 
     it('should expose autopulate as options', () => {

@@ -1,10 +1,7 @@
-/* dependencies */
-import { expect } from 'chai';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
-
-import { create, clear } from '@lykmapipo/mongoose-test-helpers';
+import { create, clear, expect } from '@lykmapipo/mongoose-test-helpers';
 import { Service } from '../../src';
 
 describe('Service', () => {

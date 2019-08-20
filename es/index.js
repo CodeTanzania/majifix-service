@@ -1,26 +1,16 @@
-import { randomColor, pkg } from '@lykmapipo/common';
+import { randomColor, idOf, mergeObjects, compact, pkg } from '@lykmapipo/common';
 import _ from 'lodash';
-import async from 'async';
-import { getString, getStrings } from '@lykmapipo/env';
-import {
-  createSubSchema,
-  model,
-  Schema,
-  ObjectId,
-} from '@lykmapipo/mongoose-common';
+import { getString } from '@lykmapipo/env';
+import { createSubSchema, model, createSchema, ObjectId } from '@lykmapipo/mongoose-common';
+import { localizedIndexesFor, localize, localizedKeysFor, localizedValuesFor } from 'mongoose-locale-schema';
 import actions from 'mongoose-rest-actions';
-import localize from 'mongoose-locale-schema';
-import {
-  models,
-  PREDEFINE_NAMESPACE_SERVICETYPE,
-  PREDEFINE_BUCKET_SERVICETYPE,
-  schema,
-} from '@codetanzania/majifix-common';
+import exportable from '@lykmapipo/mongoose-exportable';
+import { MODEL_NAME_SERVICE, checkDependenciesFor, POPULATION_MAX_DEPTH, COLLECTION_NAME_SERVICE, MODEL_NAME_SERVICEREQUEST, PATH_NAME_SERVICE } from '@codetanzania/majifix-common';
 import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
-import { Router } from '@lykmapipo/express-common';
+import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, putFor, deleteFor } from '@lykmapipo/express-rest-actions';
 
 /**
  * @module sla
@@ -38,7 +28,6 @@ import { Router } from '@lykmapipo/express-common';
 
 /**
  * @name SlaSchema
- * @type {Schema}
  * @private
  */
 const SlaSchema = createSubSchema({
@@ -50,6 +39,7 @@ const SlaSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -59,6 +49,7 @@ const SlaSchema = createSubSchema({
   ttr: {
     type: Number,
     index: true,
+    exportable: true,
     default: 0,
     fake: true,
   },
@@ -79,7 +70,6 @@ const SlaSchema = createSubSchema({
 
 /**
  * @name FlagsSchema
- * @type {Schema}
  * @private
  */
 const FlagsSchema = createSubSchema({
@@ -94,6 +84,7 @@ const FlagsSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -103,6 +94,7 @@ const FlagsSchema = createSubSchema({
   external: {
     type: Boolean,
     index: true,
+    exportable: true,
     default: false,
     fake: true,
   },
@@ -116,6 +108,7 @@ const FlagsSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -125,6 +118,7 @@ const FlagsSchema = createSubSchema({
   account: {
     type: Boolean,
     index: true,
+    exportable: true,
     default: false,
     fake: true,
   },
@@ -151,7 +145,7 @@ const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
  * @description flat a given object to unlocalized object
  * @param {string} path prefix to used on unlocalized key
  * @param {object} data object to unlocalized
- * @return {object}
+ * @returns {object} unlocalized path
  *
  * @since 0.1.0
  * @version 0.1.0
@@ -183,15 +177,25 @@ function unlocalize(path, data) {
 }
 
 /* implementation */
+
+/**
+ * @function open311Plugin
+ * @name open311Plugin
+ * @description extend service request with open311 methods
+ * @param {object} schema valid service request schema
+ *
+ * @since 0.1.0
+ * @version 0.1.0
+ */
 function open311Plugin(schema) {
   /**
    * @name toOpen311
    * @description convert service instance to Open311 compliant schema
-   * @return {object} open311 compliant service instance
+   * @returns {object} open311 compliant service instance
    *
    * @since 0.1.0
    * @version 0.1.0
-   * @type {function}
+   * @type {Function}
    * @instance
    */
   // eslint-disable-next-line no-param-reassign
@@ -259,49 +263,32 @@ function open311Plugin(schema) {
 
 /* constants */
 const DEFAULT_LOCALE$1 = getString('DEFAULT_LOCALE', 'en');
-const LOCALES = getStrings('LOCALES', ['en']);
-const JURISDICTION_PATH = 'jurisdiction';
-const SERVICEGROUP_PATH = 'group';
-const SERVICETYPE_PATH = 'type';
-const PRIORITY_PATH = 'priority';
-const { POPULATION_MAX_DEPTH } = schema;
-const SCHEMA_OPTIONS = { timestamps: true, emitIndexErrors: true };
+const OPTION_SELECT = {
+  jurisdiction: 1,
+  group: 1,
+  priority: 1,
+  code: 1,
+  name: 1,
+  color: 1,
+};
 const OPTION_AUTOPOPULATE = {
-  select: {
-    jurisdiction: 1,
-    group: 1,
-    priority: 1,
-    code: 1,
-    name: 1,
-    color: 1,
-  },
+  select: OPTION_SELECT,
   maxDepth: POPULATION_MAX_DEPTH,
 };
-const {
-  SERVICEGROUP_MODEL_NAME,
-  SERVICE_MODEL_NAME,
-  SERVICEREQUEST_MODEL_NAME,
-  JURISDICTION_MODEL_NAME,
-  PRIORITY_MODEL_NAME,
-  getModel,
-} = models;
-
-const locales = _.map(LOCALES, function getLocale(locale) {
-  const option = { name: locale };
-  if (locale === DEFAULT_LOCALE$1) {
-    option.required = true;
-  }
-  return option;
-});
+const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICE };
+const INDEX_UNIQUE = {
+  jurisdiction: 1,
+  code: 1,
+  ...localizedIndexesFor('name'),
+};
 
 /**
  * @name ServiceSchema
- * @type {Schema}
  * @since 0.1.0
  * @version 0.1.0
  * @private
  */
-const ServiceSchema = new Schema(
+const ServiceSchema = createSchema(
   {
     /**
      * @name jurisdiction
@@ -322,8 +309,9 @@ const ServiceSchema = new Schema(
      */
     jurisdiction: {
       type: ObjectId,
-      ref: JURISDICTION_MODEL_NAME,
-      exists: true,
+      ref: Jurisdiction.MODEL_NAME,
+      // required: true,
+      exists: { refresh: true, select: Jurisdiction.OPTION_SELECT },
       autopopulate: Jurisdiction.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -345,9 +333,9 @@ const ServiceSchema = new Schema(
      */
     group: {
       type: ObjectId,
-      ref: SERVICEGROUP_MODEL_NAME,
+      ref: ServiceGroup.MODEL_NAME,
       required: true,
-      exists: true,
+      exists: { refresh: true, select: ServiceGroup.OPTION_SELECT },
       autopopulate: ServiceGroup.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -371,7 +359,7 @@ const ServiceSchema = new Schema(
       type: ObjectId,
       ref: Predefine.MODEL_NAME,
       // required: true,
-      exists: true,
+      exists: { refresh: true, select: Predefine.OPTION_SELECT },
       autopopulate: Predefine.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -395,8 +383,9 @@ const ServiceSchema = new Schema(
      */
     priority: {
       type: ObjectId,
-      ref: PRIORITY_MODEL_NAME,
-      exists: true,
+      ref: Priority.MODEL_NAME,
+      // required: true,
+      exists: { refresh: true, select: Priority.OPTION_SELECT },
       autopopulate: Priority.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -413,6 +402,8 @@ const ServiceSchema = new Schema(
      * @property {boolean} required - mark required
      * @property {boolean} uppercase - force uppercasing
      * @property {boolean} index - ensure database index
+     * @property {boolean} taggable - allow field use for tagging
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
      * @property {object} fake - fake data generator options
      * @since 0.1.0
@@ -442,8 +433,9 @@ const ServiceSchema = new Schema(
      * @property {boolean} trim - force trimming
      * @property {boolean} required - mark required
      * @property {boolean} index - ensure database index
+     * @property {boolean} taggable - allow field use for tagging
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
-     * @property {array}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 0.1.0
@@ -452,10 +444,10 @@ const ServiceSchema = new Schema(
     name: localize({
       type: String,
       trim: true,
-      required: true,
       index: true,
+      taggable: true,
+      exportable: true,
       searchable: true,
-      locales,
       fake: {
         generator: 'hacker',
         type: 'ingverb',
@@ -471,8 +463,8 @@ const ServiceSchema = new Schema(
      * @property {object} type - schema(data) type
      * @property {boolean} trim - force trimming
      * @property {boolean} index - ensure database index
+     * @property {boolean} exportable - allow field to be exporteds
      * @property {boolean} searchable - allow for searching
-     * @property {array}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 0.1.0
@@ -482,8 +474,8 @@ const ServiceSchema = new Schema(
       type: String,
       trim: true,
       index: true,
+      exportable: true,
       searchable: true,
-      locales,
       fake: {
         generator: 'lorem',
         type: 'paragraph',
@@ -499,6 +491,7 @@ const ServiceSchema = new Schema(
      * @property {object} type - schema(data) type
      * @property {boolean} trim - force trimming
      * @property {boolean} uppercase - force upper-casing
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} default - default value set when none provided
      * @property {object} fake - fake data generator options
      * @since 0.1.0
@@ -508,6 +501,7 @@ const ServiceSchema = new Schema(
     color: {
       type: String,
       trim: true,
+      exportable: true,
       uppercase: true,
       default: () => randomColor(),
       fake: true,
@@ -534,8 +528,38 @@ const ServiceSchema = new Schema(
      * @instance
      */
     flags: FlagsSchema,
+
+    /**
+     * @name default
+     * @description Tells whether a service is the default.
+     *
+     * @type {object}
+     * @property {object} type - schema(data) type
+     * @property {boolean} index - ensure database index
+     * @property {boolean} exportable - allow field to be exported
+     * @property {boolean} default - default value set when none provided
+     * @property {object|boolean} fake - fake data generator options
+     *
+     * @author lally elias <lallyelias87@gmail.com>
+     * @since 0.1.0
+     * @version 0.1.0
+     * @instance
+     * @example
+     * false
+     *
+     */
+    default: {
+      type: Boolean,
+      index: true,
+      exportable: true,
+      default: false,
+      fake: true,
+    },
   },
-  SCHEMA_OPTIONS
+  SCHEMA_OPTIONS,
+  actions,
+  exportable,
+  open311Plugin
 );
 
 /*
@@ -544,16 +568,17 @@ const ServiceSchema = new Schema(
  *------------------------------------------------------------------------------
  */
 
-// ensure `unique` compound index on jurisdiction, code and name
-// to fix unique indexes on code and name in case they are used in more than
-// one jurisdiction with different administration
-_.forEach(locales, function ensureIndex(locale) {
-  const field = `name.${locale.name}`;
-  ServiceSchema.index(
-    { jurisdiction: 1, code: 1, [field]: 1 },
-    { unique: true }
-  );
-});
+/**
+ * @name index
+ * @description ensure unique compound index on service name, code
+ * and jurisdiction to force unique service definition
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ */
+ServiceSchema.index(INDEX_UNIQUE, { unique: true });
 
 /*
  *------------------------------------------------------------------------------
@@ -564,10 +589,29 @@ _.forEach(locales, function ensureIndex(locale) {
 /**
  * @name  preValidate
  * @description run custom logics before validations
- * @return {function} next a callback invoked after pre validate
- * @type {function}
+ * @returns {Function} next a callback invoked after pre validate
+ * @type {Function}
  */
 ServiceSchema.pre('validate', function validate(next) {
+  return this.preValidate(next);
+});
+
+/*
+ *------------------------------------------------------------------------------
+ * Instance
+ *------------------------------------------------------------------------------
+ */
+
+/**
+ * @name preValidate
+ * @description service schema pre validation hook logic
+ * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
+ * @since 0.1.0
+ * @version 1.0.0
+ * @instance
+ */
+ServiceSchema.methods.preValidate = function preValidate(done) {
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -595,20 +639,16 @@ ServiceSchema.pre('validate', function validate(next) {
       .toUpperCase();
   }
 
-  next();
-});
-
-/*
- *------------------------------------------------------------------------------
- * Instance
- *------------------------------------------------------------------------------
- */
+  // continue
+  return done();
+};
 
 /**
  * @name beforeDelete
  * @function beforeDelete
  * @description pre delete service logics
- * @param  {function} done callback to invoke on success or error
+ * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} dependence free instance or error
  *
  * @since 0.1.0
  * @version 1.0.0
@@ -617,225 +657,14 @@ ServiceSchema.pre('validate', function validate(next) {
 ServiceSchema.methods.beforeDelete = function beforeDelete(done) {
   // restrict delete if
 
-  async.parallel(
-    {
-      // 1...there are service request use the service
-      serviceRequest: function checkServiceRequestDependency(next) {
-        // get service request model
-        const ServiceRequest = getModel(SERVICEREQUEST_MODEL_NAME);
+  // collect dependencies model name
+  const dependencies = [MODEL_NAME_SERVICEREQUEST];
 
-        // check service request dependency
-        if (ServiceRequest) {
-          ServiceRequest.count(
-            { service: this._id }, // eslint-disable-line no-underscore-dangle
-            function cb(error, count) {
-              let cbError = error;
-              // warning can not delete
-              if (count && count > 0) {
-                const errorMessage = `Fail to Delete. ${count} service requests depend on it`;
-                cbError = new Error(errorMessage);
-              }
+  // path to check
+  const path = PATH_NAME_SERVICE;
 
-              // ensure error status
-              if (cbError) {
-                cbError.status = 400;
-              }
-
-              // return
-              next(cbError, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-    },
-    function cb(error) {
-      done(error, this);
-    }
-  );
-};
-
-/**
- * @name beforePost
- * @function beforePost
- * @description pre save service logics
- * @param  {function} done callback to invoke on success or error
- *
- * @since 0.1.0
- * @version 1.0.0
- * @instance
- */
-ServiceSchema.methods.beforePost = function beforePost(done) {
-  // pre loads
-  async.parallel(
-    {
-      // 1...preload jurisdiction
-      jurisdiction: function preloadJurisdiction(next) {
-        // ensure jurisdiction is pre loaded before post(save)
-        const jurisdictionId = this.jurisdiction
-          ? this.jurisdiction._id // eslint-disable-line no-underscore-dangle
-          : this.jurisdiction;
-
-        // prefetch existing jurisdiction
-        if (jurisdictionId) {
-          Jurisdiction.getById(
-            jurisdictionId,
-            function cb(error, jurisdiction) {
-              // assign existing jurisdiction
-              if (jurisdiction) {
-                this.jurisdiction = jurisdiction;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-
-      // 2...preload service group
-      group: function preloadServiceGroup(next) {
-        // ensure service group is pre loaded before post(save)
-        const groupId = this.group ? this.group._id : this.group; // eslint-disable-line no-underscore-dangle
-
-        // prefetch existing group
-        if (groupId) {
-          ServiceGroup.getById(
-            groupId,
-            function cb(error, group) {
-              // assign existing group
-              if (group) {
-                this.group = group;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-
-      // 2...preload service type
-      type: function preloadServiceType(next) {
-        // ensure service type is pre loaded before post(save)
-        const typeId = this.type ? this.type._id : this.type; // eslint-disable-line no-underscore-dangle
-        const criteria = {
-          _id: typeId,
-          namespace: PREDEFINE_NAMESPACE_SERVICETYPE,
-          bucket: PREDEFINE_BUCKET_SERVICETYPE,
-        };
-
-        // prefetch existing type
-        if (typeId) {
-          Predefine.getOneOrDefault(
-            criteria,
-            function cb(error, type) {
-              // assign existing type
-              if (type) {
-                this.type = type;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-
-      // 3...preload priority
-      priority: function preloadPriority(next) {
-        // ensure priority is pre loaded before post(save)
-        const priorityId = this.priority ? this.priority._id : this.priority; // eslint-disable-line no-underscore-dangle
-
-        // prefetch existing priority
-        if (priorityId) {
-          Priority.getById(
-            priorityId,
-            function cb(error, priority) {
-              // assign existing priority
-              if (priority) {
-                this.priority = priority;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-    },
-    function cb(error) {
-      done(error, this);
-    }.bind(this)
-  );
-};
-
-/**
- * @name afterPost
- * @function afterPost
- * @description post save service logics
- * @param  {function} done callback to invoke on success or error
- *
- * @since 0.1.0
- * @version 1.0.0
- * @instance
- */
-ServiceSchema.methods.afterPost = function afterPost(done) {
-  // ensure jurisdiction is populated after post(save)
-  const jurisdiction = _.merge(
-    {},
-    { path: JURISDICTION_PATH },
-    Jurisdiction.OPTION_AUTOPOPULATE
-  );
-  this.populate(jurisdiction);
-
-  // ensure service group is populated after post(save)
-  const group = _.merge(
-    {},
-    { path: SERVICEGROUP_PATH },
-    ServiceGroup.OPTION_AUTOPOPULATE
-  );
-  this.populate(group);
-
-  // ensure service type is populated after post(save)
-  const type = _.merge(
-    {},
-    { path: SERVICETYPE_PATH },
-    Predefine.OPTION_AUTOPOPULATE
-  );
-  this.populate(type);
-
-  // ensure priority is populated after post(save)
-  const priority = _.merge(
-    {},
-    { path: PRIORITY_PATH },
-    Priority.OPTION_AUTOPOPULATE
-  );
-  this.populate(priority, done);
+  // do check dependencies
+  return checkDependenciesFor(this, { path, dependencies }, done);
 };
 
 /*
@@ -844,23 +673,100 @@ ServiceSchema.methods.afterPost = function afterPost(done) {
  *------------------------------------------------------------------------------
  */
 
-/* expose static constants */
-ServiceSchema.statics.MODEL_NAME = SERVICE_MODEL_NAME;
-ServiceSchema.statics.DEFAULT_LOCALE = DEFAULT_LOCALE$1;
+/* static constants */
+ServiceSchema.statics.MODEL_NAME = MODEL_NAME_SERVICE;
+ServiceSchema.statics.OPTION_SELECT = OPTION_SELECT;
 ServiceSchema.statics.OPTION_AUTOPOPULATE = OPTION_AUTOPOPULATE;
 
-/*
- *------------------------------------------------------------------------------
- * Plugins
- *------------------------------------------------------------------------------
+/**
+ * @name findDefault
+ * @function findDefault
+ * @description find default service
+ * @param {Function} done a callback to invoke on success or failure
+ * @returns {Service} default service
+ * @since 0.1.0
+ * @version 1.0.0
+ * @static
  */
+ServiceSchema.statics.findDefault = done => {
+  // refs
+  const Service = model(MODEL_NAME_SERVICE);
 
-/* use mongoose rest actions */
-ServiceSchema.plugin(open311Plugin);
-ServiceSchema.plugin(actions);
+  // obtain default service
+  return Service.getOneOrDefault({}, done);
+};
+
+/**
+ * @name prepareSeedCriteria
+ * @function prepareSeedCriteria
+ * @description define seed data criteria
+ * @param {object} seed service to be seeded
+ * @returns {object} packed criteria for seeding
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.5.0
+ * @version 0.1.0
+ * @static
+ */
+ServiceSchema.statics.prepareSeedCriteria = seed => {
+  const names = localizedKeysFor('name');
+
+  const copyOfSeed = seed;
+  copyOfSeed.name = localizedValuesFor(seed.name);
+
+  const criteria = idOf(copyOfSeed)
+    ? _.pick(copyOfSeed, '_id')
+    : _.pick(copyOfSeed, 'jurisdiction', 'code', ...names);
+
+  return criteria;
+};
+
+/**
+ * @name getOneOrDefault
+ * @function getOneOrDefault
+ * @description Find existing service or default based on given criteria
+ * @param {object} criteria valid query criteria
+ * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} found service or error
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.5.0
+ * @version 0.1.0
+ * @static
+ * @example
+ *
+ * const criteria = { _id: '...'};
+ * Service.getOneOrDefault(criteria, (error, found) => { ... });
+ *
+ */
+ServiceSchema.statics.getOneOrDefault = (criteria, done) => {
+  // normalize criteria
+  const { _id, ...filters } = mergeObjects(criteria);
+  const allowId = !_.isEmpty(_id);
+  const allowFilters = !_.isEmpty(filters);
+
+  const byDefault = mergeObjects({ default: true });
+  const byId = mergeObjects({ _id });
+  const byFilters = mergeObjects(filters);
+
+  const or = compact([
+    allowId ? byId : undefined,
+    allowFilters ? byFilters : undefined,
+     byDefault ,
+  ]);
+  const filter = { $or: or };
+
+  // refs
+  const Service = model(MODEL_NAME_SERVICE);
+
+  // query
+  return Service.findOne(filter)
+    .orFail()
+    .exec(done);
+};
 
 /* export service model */
-var Service = model(SERVICE_MODEL_NAME, ServiceSchema);
+var Service = model(MODEL_NAME_SERVICE, ServiceSchema);
 
 /**
  * @apiDefine Service  Service
@@ -876,11 +782,13 @@ var Service = model(SERVICE_MODEL_NAME, ServiceSchema);
  * @public
  */
 
-/* local constants */
+/* constants */
 const API_VERSION = getString('API_VERSION', '1.0.0');
 const PATH_OPEN_311 = '/open311/services.:ext?';
-const PATH_LIST = '/services';
 const PATH_SINGLE = '/services/:id';
+const PATH_LIST = '/services';
+const PATH_EXPORT = '/services/export';
+const PATH_SCHEMA = '/services/schema/';
 const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/services';
 
 /* declarations */
@@ -904,23 +812,49 @@ const router = new Router({
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_LIST, function getServices(request, response, next) {
-  // obtain request options
-  const options = _.merge({}, request.mquery);
+router.get(
+  PATH_LIST,
+  getFor({
+    get: (options, done) => Service.get(options, done),
+  })
+);
 
-  Service.get(options, function onGetServices(error, results) {
-    // forward error
-    if (error) {
-      next(error);
-    }
+/**
+ * @api {get} /services/schema Get Service Schema
+ * @apiVersion 1.0.0
+ * @apiName GetServiceSchema
+ * @apiGroup Service
+ * @apiDescription Returns service json schema definition
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_SCHEMA,
+  schemaFor({
+    getSchema: (query, done) => {
+      const jsonSchema = Service.jsonSchema();
+      return done(null, jsonSchema);
+    },
+  })
+);
 
-    // handle response
-    else {
-      response.status(200);
-      response.json(results);
-    }
-  });
-});
+/**
+ * @api {get} /services/export Export Services
+ * @apiVersion 1.0.0
+ * @apiName ExportServices
+ * @apiGroup Service
+ * @apiDescription Export services as csv
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_EXPORT,
+  downloadFor({
+    download: (options, done) => {
+      const fileName = `services_exports_${Date.now()}.csv`;
+      const readStream = Service.exportCsv(options);
+      return done(null, { fileName, readStream });
+    },
+  })
+);
 
 /**
  * @api {get} /open311/services List Services
@@ -990,23 +924,12 @@ router.get(PATH_OPEN_311, function getServices(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.post(PATH_LIST, function postService(request, response, next) {
-  // obtain request body
-  const body = _.merge({}, request.body);
-
-  Service.post(body, function onPostService(error, created) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(201);
-      response.json(created);
-    }
-  });
-});
+router.post(
+  PATH_LIST,
+  postFor({
+    post: (body, done) => Service.post(body, done),
+  })
+);
 
 /**
  * @api {get} /services/:id Get Existing Service
@@ -1024,26 +947,12 @@ router.post(PATH_LIST, function postService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_SINGLE, function getService(request, response, next) {
-  // obtain request options
-  const options = _.merge({}, request.mquery);
-
-  // obtain service id
-  options._id = request.params.id; // eslint-disable-line no-underscore-dangle
-
-  Service.getById(options, function onGetService(error, found) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(found);
-    }
-  });
-});
+router.get(
+  PATH_SINGLE,
+  getByIdFor({
+    getById: (options, done) => Service.getById(options, done),
+  })
+);
 
 /**
  * @api {patch} /services/:id Patch Existing Service
@@ -1061,26 +970,12 @@ router.get(PATH_SINGLE, function getService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.patch(PATH_SINGLE, function patchService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  // obtain request body
-  const patches = _.merge({}, request.body);
-
-  Service.patch(id, patches, function onPatchService(error, patched) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(patched);
-    }
-  });
-});
+router.patch(
+  PATH_SINGLE,
+  patchFor({
+    patch: (options, done) => Service.patch(options, done),
+  })
+);
 
 /**
  * @api {put} /services/:id Put Existing Service
@@ -1098,26 +993,12 @@ router.patch(PATH_SINGLE, function patchService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.put(PATH_SINGLE, function putService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  // obtain request body
-  const updates = _.merge({}, request.body);
-
-  Service.put(id, updates, function onPutService(error, updated) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(updated);
-    }
-  });
-});
+router.put(
+  PATH_SINGLE,
+  putFor({
+    put: (options, done) => Service.put(options, done),
+  })
+);
 
 /**
  * @api {delete} /services/:id Delete Existing Service
@@ -1135,23 +1016,13 @@ router.put(PATH_SINGLE, function putService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.delete(PATH_SINGLE, function deleteService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  Service.del(id, function onDeleteService(error, deleted) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(deleted);
-    }
-  });
-});
+router.delete(
+  PATH_SINGLE,
+  deleteFor({
+    del: (options, done) => Service.del(options, done),
+    soft: true,
+  })
+);
 
 /**
  * @api {get} /jurisdictions/:jurisdiction/services List Jurisdiction Services
@@ -1169,25 +1040,12 @@ router.delete(PATH_SINGLE, function deleteService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_JURISDICTION, function getServices(request, response, next) {
-  // obtain request options
-  const { jurisdiction } = request.params;
-  const filter = jurisdiction ? { filter: { jurisdiction } } : {};
-  const options = _.merge({}, filter, request.mquery);
-
-  Service.get(options, function onGetServices(error, found) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(found);
-    }
-  });
-});
+router.get(
+  PATH_JURISDICTION,
+  getFor({
+    get: (options, done) => Service.get(options, done),
+  })
+);
 
 /**
  * @name majifix-service
@@ -1209,7 +1067,7 @@ router.get(PATH_JURISDICTION, function getServices(request, response, next) {
  * app.start()
  */
 
-/* declarations */
+/* expose package information */
 const info = pkg(
   `${__dirname}/package.json`,
   'name',
@@ -1223,7 +1081,7 @@ const info = pkg(
   'contributors'
 );
 
-// extract router api version
+/* extract router api version */
 const apiVersion = router.version;
 
 export { Service, apiVersion, info, router };

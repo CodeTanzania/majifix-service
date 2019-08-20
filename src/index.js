@@ -17,13 +17,11 @@
  *
  * app.start()
  */
-
-/* dependencies */
 import { pkg } from '@lykmapipo/common';
 import Service from './service.model';
 import router from './http.router';
 
-/* declarations */
+/* expose package information */
 const info = pkg(
   `${__dirname}/package.json`,
   'name',
@@ -37,7 +35,7 @@ const info = pkg(
   'contributors'
 );
 
-// extract router api version
+/* extract router api version */
 const apiVersion = router.version;
 
 export { apiVersion, info, Service, router };

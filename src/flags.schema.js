@@ -16,7 +16,6 @@ import { createSubSchema } from '@lykmapipo/mongoose-common';
 
 /**
  * @name FlagsSchema
- * @type {Schema}
  * @private
  */
 const FlagsSchema = createSubSchema({
@@ -31,6 +30,7 @@ const FlagsSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -40,6 +40,7 @@ const FlagsSchema = createSubSchema({
   external: {
     type: Boolean,
     index: true,
+    exportable: true,
     default: false,
     fake: true,
   },
@@ -53,6 +54,7 @@ const FlagsSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -62,6 +64,7 @@ const FlagsSchema = createSubSchema({
   account: {
     type: Boolean,
     index: true,
+    exportable: true,
     default: false,
     fake: true,
   },

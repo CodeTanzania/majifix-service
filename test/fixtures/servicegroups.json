@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "5d535a0a62b47901d3294ff8",
+    "name": { "en": "Commercial" },
+    "code": "C",
+    "color": "#BACFFC",
+    "description": {
+      "en": "Ad et adipisci voluptatem. Consequatur excepturi fuga. Odit quod amet"
+    },
+    "default": true
+  }
+]

@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/CodeTanzania/majifix-service.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service)
 [![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service)
+[![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service/badge.svg?branch=develop)](https://coveralls.io/github/CodeTanzania/majifix-service?branch=develop)
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service/tree/develop)
 
 A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction.
@@ -68,7 +69,7 @@ It will be nice, if you open an issue first so that we can know what is going on
 
 The MIT License (MIT)
 
-Copyright (c) 2018 CodeTanzania & Contributors
+Copyright (c) CodeTanzania & Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

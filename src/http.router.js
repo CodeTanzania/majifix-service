@@ -138,18 +138,28 @@
  *   "lastModified": "2018-05-07T07:22:43.771Z"
  * }
  */
-
-/* dependencies */
 import _ from 'lodash';
 import { getString } from '@lykmapipo/env';
-import { Router } from '@lykmapipo/express-common';
+import {
+  getFor,
+  schemaFor,
+  downloadFor,
+  getByIdFor,
+  postFor,
+  patchFor,
+  putFor,
+  deleteFor,
+  Router,
+} from '@lykmapipo/express-rest-actions';
 import Service from './service.model';
 
-/* local constants */
+/* constants */
 const API_VERSION = getString('API_VERSION', '1.0.0');
 const PATH_OPEN_311 = '/open311/services.:ext?';
-const PATH_LIST = '/services';
 const PATH_SINGLE = '/services/:id';
+const PATH_LIST = '/services';
+const PATH_EXPORT = '/services/export';
+const PATH_SCHEMA = '/services/schema/';
 const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/services';
 
 /* declarations */
@@ -173,23 +183,49 @@ const router = new Router({
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_LIST, function getServices(request, response, next) {
-  // obtain request options
-  const options = _.merge({}, request.mquery);
+router.get(
+  PATH_LIST,
+  getFor({
+    get: (options, done) => Service.get(options, done),
+  })
+);
 
-  Service.get(options, function onGetServices(error, results) {
-    // forward error
-    if (error) {
-      next(error);
-    }
+/**
+ * @api {get} /services/schema Get Service Schema
+ * @apiVersion 1.0.0
+ * @apiName GetServiceSchema
+ * @apiGroup Service
+ * @apiDescription Returns service json schema definition
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_SCHEMA,
+  schemaFor({
+    getSchema: (query, done) => {
+      const jsonSchema = Service.jsonSchema();
+      return done(null, jsonSchema);
+    },
+  })
+);
 
-    // handle response
-    else {
-      response.status(200);
-      response.json(results);
-    }
-  });
-});
+/**
+ * @api {get} /services/export Export Services
+ * @apiVersion 1.0.0
+ * @apiName ExportServices
+ * @apiGroup Service
+ * @apiDescription Export services as csv
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_EXPORT,
+  downloadFor({
+    download: (options, done) => {
+      const fileName = `services_exports_${Date.now()}.csv`;
+      const readStream = Service.exportCsv(options);
+      return done(null, { fileName, readStream });
+    },
+  })
+);
 
 /**
  * @api {get} /open311/services List Services
@@ -259,23 +295,12 @@ router.get(PATH_OPEN_311, function getServices(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.post(PATH_LIST, function postService(request, response, next) {
-  // obtain request body
-  const body = _.merge({}, request.body);
-
-  Service.post(body, function onPostService(error, created) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(201);
-      response.json(created);
-    }
-  });
-});
+router.post(
+  PATH_LIST,
+  postFor({
+    post: (body, done) => Service.post(body, done),
+  })
+);
 
 /**
  * @api {get} /services/:id Get Existing Service
@@ -293,26 +318,12 @@ router.post(PATH_LIST, function postService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_SINGLE, function getService(request, response, next) {
-  // obtain request options
-  const options = _.merge({}, request.mquery);
-
-  // obtain service id
-  options._id = request.params.id; // eslint-disable-line no-underscore-dangle
-
-  Service.getById(options, function onGetService(error, found) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(found);
-    }
-  });
-});
+router.get(
+  PATH_SINGLE,
+  getByIdFor({
+    getById: (options, done) => Service.getById(options, done),
+  })
+);
 
 /**
  * @api {patch} /services/:id Patch Existing Service
@@ -330,26 +341,12 @@ router.get(PATH_SINGLE, function getService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.patch(PATH_SINGLE, function patchService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  // obtain request body
-  const patches = _.merge({}, request.body);
-
-  Service.patch(id, patches, function onPatchService(error, patched) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(patched);
-    }
-  });
-});
+router.patch(
+  PATH_SINGLE,
+  patchFor({
+    patch: (options, done) => Service.patch(options, done),
+  })
+);
 
 /**
  * @api {put} /services/:id Put Existing Service
@@ -367,26 +364,12 @@ router.patch(PATH_SINGLE, function patchService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.put(PATH_SINGLE, function putService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  // obtain request body
-  const updates = _.merge({}, request.body);
-
-  Service.put(id, updates, function onPutService(error, updated) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(updated);
-    }
-  });
-});
+router.put(
+  PATH_SINGLE,
+  putFor({
+    put: (options, done) => Service.put(options, done),
+  })
+);
 
 /**
  * @api {delete} /services/:id Delete Existing Service
@@ -404,23 +387,13 @@ router.put(PATH_SINGLE, function putService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.delete(PATH_SINGLE, function deleteService(request, response, next) {
-  // obtain service id
-  const { id } = request.params;
-
-  Service.del(id, function onDeleteService(error, deleted) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(deleted);
-    }
-  });
-});
+router.delete(
+  PATH_SINGLE,
+  deleteFor({
+    del: (options, done) => Service.del(options, done),
+    soft: true,
+  })
+);
 
 /**
  * @api {get} /jurisdictions/:jurisdiction/services List Jurisdiction Services
@@ -438,25 +411,12 @@ router.delete(PATH_SINGLE, function deleteService(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_JURISDICTION, function getServices(request, response, next) {
-  // obtain request options
-  const { jurisdiction } = request.params;
-  const filter = jurisdiction ? { filter: { jurisdiction } } : {};
-  const options = _.merge({}, filter, request.mquery);
-
-  Service.get(options, function onGetServices(error, found) {
-    // forward error
-    if (error) {
-      next(error);
-    }
-
-    // handle response
-    else {
-      response.status(200);
-      response.json(found);
-    }
-  });
-});
+router.get(
+  PATH_JURISDICTION,
+  getFor({
+    get: (options, done) => Service.get(options, done),
+  })
+);
 
 /* expose router */
 export default router;
