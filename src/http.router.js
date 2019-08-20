@@ -138,6 +138,7 @@
  *   "lastModified": "2018-05-07T07:22:43.771Z"
  * }
  */
+import _ from 'lodash';
 import { getString } from '@lykmapipo/env';
 import {
   getFor,
