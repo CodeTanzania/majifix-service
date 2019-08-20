@@ -18,6 +18,3 @@ node_modules
 libcov
 coverage
 .nyc_output
-
-# Docs
-docs

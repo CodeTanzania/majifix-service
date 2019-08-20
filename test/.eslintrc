@@ -1,13 +1,11 @@
 {
-  "extends": ["airbnb-base", "plugin:prettier/recommended"],
-  "plugins": ["prettier", "mocha"],
+  "extends": [
+    "airbnb-base",
+    "plugin:prettier/recommended",
+    "plugin:jsdoc/recommended"
+  ],
+  "plugins": ["prettier", "jsdoc"],
   "rules": {
-    "prettier/prettier": "error",
-    "mocha/no-exclusive-tests": "off",
-    "no-unused-expressions": "off",
-    "no-underscore-dangle": "off"
-  },
-  "env": {
-    "mocha": true
+    "prettier/prettier": "error"
   }
 }
