@@ -11,10 +11,6 @@
  * @since  0.1.0
  * @version 0.1.0
  */
-
-/* @todo years, months, days, hours */
-
-/* dependencies */
 import { createSubSchema } from '@lykmapipo/mongoose-common';
 
 /**
@@ -30,6 +26,7 @@ const SlaSchema = createSubSchema({
    * @type {object}
    * @property {object} type - schema(data) type
    * @property {boolean} index - ensure database index
+   * @property {boolean} exportable - allow field to be exported
    * @property {boolean} default - default value set when none provided
    * @property {object} fake - fake data generator options
    * @since 0.1.0
@@ -39,6 +36,7 @@ const SlaSchema = createSubSchema({
   ttr: {
     type: Number,
     index: true,
+    exportable: true,
     default: 0,
     fake: true,
   },
