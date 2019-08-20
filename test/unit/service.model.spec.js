@@ -11,6 +11,18 @@ describe('Service', () => {
       expect(Service.MODEL_NAME).to.be.equal('Service');
     });
 
+    it('should expose select as options', () => {
+      expect(Service.OPTION_SELECT).to.exist;
+      expect(Service.OPTION_SELECT).to.be.eql({
+        jurisdiction: 1,
+        group: 1,
+        priority: 1,
+        code: 1,
+        name: 1,
+        color: 1,
+      });
+    });
+
     it('should expose autopulate as options', () => {
       expect(Service.OPTION_AUTOPOPULATE).to.exist;
       expect(Service.OPTION_AUTOPOPULATE).to.be.eql({
