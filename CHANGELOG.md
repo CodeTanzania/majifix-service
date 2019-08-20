@@ -1,3 +1,53 @@
+#### 1.3.0 (2019-08-20)
+
+##### Chores
+
+* **examples:**  improve seed for open311 ([3bb7caa5](https://github.com/CodeTanzania/majifix-service/commit/3bb7caa5fe279aabc9dd532693048bc005592abb))
+* **configs:**  update eslint, prettier & ignore files ([76f5b847](https://github.com/CodeTanzania/majifix-service/commit/76f5b847095891d538c430372521c114098c9474))
+* **deps:**
+  *  force latest version & audit fix ([270676a9](https://github.com/CodeTanzania/majifix-service/commit/270676a9df7cab96bf881127d2adec8cb01bd396))
+  *  update dependency eslint-config-prettier to v6.1.0 ([5ab1af25](https://github.com/CodeTanzania/majifix-service/commit/5ab1af251574417b4ba95dcde65ad3aa6b6c17f6))
+  *  update dependency eslint to v6.2.0 ([c1def6e8](https://github.com/CodeTanzania/majifix-service/commit/c1def6e88d8ddb3afad0c65fe58a79fc34de6dc2))
+  *  update dependency lint-staged to v9.2.3 ([35d6f2a5](https://github.com/CodeTanzania/majifix-service/commit/35d6f2a57e27c2b132df957fb77f102565a73185))
+  *  update dependency lint-staged to v9.2.2 ([af9ef38b](https://github.com/CodeTanzania/majifix-service/commit/af9ef38b796680807741bec8cd87f27891ad6c7a))
+  *  update dependency husky to v3.0.4 ([02da436f](https://github.com/CodeTanzania/majifix-service/commit/02da436fc950fda16c7443eda10fd65104d0be00))
+  *  update dependency rimraf to v3 ([85915e83](https://github.com/CodeTanzania/majifix-service/commit/85915e83344e396e279a0f5ac53d4d1dbc8b4ef7))
+  *  update dependency @lykmapipo/mongoose-test-helpers to v0.7.17 ([da1965ca](https://github.com/CodeTanzania/majifix-service/commit/da1965cacc2af9475737e08a36721302e0a2accb))
+  *  update dependency eslint-config-airbnb-base to v14 ([e9380513](https://github.com/CodeTanzania/majifix-service/commit/e9380513355bbce59300e910ec2d000194202d3a))
+  *  update dependency husky to v3.0.3 ([101ca959](https://github.com/CodeTanzania/majifix-service/commit/101ca9590721ea30450d88035a3af6a8fe5ca38d))
+  *  update dependency mongoose to v5.6.9 ([1ff93fb9](https://github.com/CodeTanzania/majifix-service/commit/1ff93fb9995b54f4789a52c1d6255b6b3438c621))
+  *  update dependency rollup to v1.19.4 ([00fd9543](https://github.com/CodeTanzania/majifix-service/commit/00fd95435858072724655291c3470725913df368))
+  *  update dependency sinon to v7.4.1 ([f797a420](https://github.com/CodeTanzania/majifix-service/commit/f797a420c68321392cd62bb2d8594df13111228d))
+  *  update dependency rollup to v1.19.3 ([b6564fa9](https://github.com/CodeTanzania/majifix-service/commit/b6564fa9a5a7b563a03436321af1ce25b1c953d8))
+  *  update dependency rollup to v1.19.2 ([1705277e](https://github.com/CodeTanzania/majifix-service/commit/1705277eae185da3d873e5bcfb2ebfe558a36be0))
+  *  roll back dependency sinon to 7.3.2 ([cab349ca](https://github.com/CodeTanzania/majifix-service/commit/cab349cad311638ffa9cc06f39ce702e97fa4325))
+  *  update dependency sinon to v7.4.0 ([f3d6ef06](https://github.com/CodeTanzania/majifix-service/commit/f3d6ef066ce4740f170111e60809f491ab2c32c1))
+  *  update dependency mongoose to v5.6.8 ([e939eef8](https://github.com/CodeTanzania/majifix-service/commit/e939eef85187e000560fc1dc32bf81618496af2c))
+  *  update dependency rollup to v1.18.0 ([9f48062a](https://github.com/CodeTanzania/majifix-service/commit/9f48062aa01dad91d3e0e78cb2be209b24240a62))
+  *  pin dependencies ([e8f988f6](https://github.com/CodeTanzania/majifix-service/commit/e8f988f6de0be3b5d28ff76141875e12e395c190))
+  *  update dependencies to latest versions ([abaa1e78](https://github.com/CodeTanzania/majifix-service/commit/abaa1e78374ea1d438396f100b78de84955f3bad))
+*  configure renovate ([b2185bb1](https://github.com/CodeTanzania/majifix-service/commit/b2185bb10cd59ecc26c55672d68d00ff58a0a109))
+
+##### Documentation Changes
+
+*  add test coverage badge ([6d812f97](https://github.com/CodeTanzania/majifix-service/commit/6d812f9720ee5203c581a29e0e3030ee8326f659))
+
+##### Refactors
+
+* **router:**  use express rest actions ([34e85964](https://github.com/CodeTanzania/majifix-service/commit/34e85964076a98e0af2ed487e9442b23c00b111b))
+* **model:**  use latest depedencies api ([ba602294](https://github.com/CodeTanzania/majifix-service/commit/ba6022942098e903e02adc063561750e0b651d96))
+*  migrate to latest dependencies api ([82a914de](https://github.com/CodeTanzania/majifix-service/commit/82a914deed1f5bec5103eff7e0d00ca0f4cecfe6))
+
+##### Tests
+
+* **integration:**
+  *  add seed specs ([a290e105](https://github.com/CodeTanzania/majifix-service/commit/a290e105e174ee24a6cd6924152286d27e6ca493))
+  *  add getOneOrDefault specs ([1aa0ae17](https://github.com/CodeTanzania/majifix-service/commit/1aa0ae17726e842725165c8e122c674acf91ed13))
+  *  use test helpers ([6605e264](https://github.com/CodeTanzania/majifix-service/commit/6605e2644616ecb125b58050bbd7c7750ffc23e1))
+* **unit:**
+  *  use test helpers ([4818e0c2](https://github.com/CodeTanzania/majifix-service/commit/4818e0c2b955bd311faa39e4808cac924f40f690))
+  *  improve schema and model specs ([9dae5aed](https://github.com/CodeTanzania/majifix-service/commit/9dae5aed19df04089fde0425baa7c75a2c74438e))
+
 #### 1.2.0 (2019-07-27)
 
 ##### Chores
