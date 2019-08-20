@@ -95,6 +95,7 @@ const ServiceSchema = createSchema(
     jurisdiction: {
       type: ObjectId,
       ref: Jurisdiction.MODEL_NAME,
+      // required: true,
       exists: { refresh: true, select: Jurisdiction.OPTION_SELECT },
       autopopulate: Jurisdiction.OPTION_AUTOPOPULATE,
       index: true,
@@ -168,6 +169,7 @@ const ServiceSchema = createSchema(
     priority: {
       type: ObjectId,
       ref: Priority.MODEL_NAME,
+      // required: true,
       exists: { refresh: true, select: Priority.OPTION_SELECT },
       autopopulate: Priority.OPTION_AUTOPOPULATE,
       index: true,
