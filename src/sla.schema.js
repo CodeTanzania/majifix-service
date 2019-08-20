@@ -19,7 +19,6 @@ import { createSubSchema } from '@lykmapipo/mongoose-common';
 
 /**
  * @name SlaSchema
- * @type {Schema}
  * @private
  */
 const SlaSchema = createSubSchema({

@@ -16,7 +16,6 @@ import { createSubSchema } from '@lykmapipo/mongoose-common';
 
 /**
  * @name FlagsSchema
- * @type {Schema}
  * @private
  */
 const FlagsSchema = createSubSchema({

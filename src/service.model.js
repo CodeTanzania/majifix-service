@@ -232,7 +232,7 @@ const ServiceSchema = new Schema(
      * @property {boolean} required - mark required
      * @property {boolean} index - ensure database index
      * @property {boolean} searchable - allow for searching
-     * @property {array}  locales - list of supported locales
+     * @property {Array}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 0.1.0
@@ -261,7 +261,7 @@ const ServiceSchema = new Schema(
      * @property {boolean} trim - force trimming
      * @property {boolean} index - ensure database index
      * @property {boolean} searchable - allow for searching
-     * @property {array}  locales - list of supported locales
+     * @property {Array}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 0.1.0
@@ -353,8 +353,8 @@ _.forEach(locales, function ensureIndex(locale) {
 /**
  * @name  preValidate
  * @description run custom logics before validations
- * @return {function} next a callback invoked after pre validate
- * @type {function}
+ * @returns {Function} next a callback invoked after pre validate
+ * @type {Function}
  */
 ServiceSchema.pre('validate', function validate(next) {
   // set default color if not set
@@ -397,7 +397,7 @@ ServiceSchema.pre('validate', function validate(next) {
  * @name beforeDelete
  * @function beforeDelete
  * @description pre delete service logics
- * @param  {function} done callback to invoke on success or error
+ * @param  {Function} done callback to invoke on success or error
  *
  * @since 0.1.0
  * @version 1.0.0
@@ -452,7 +452,7 @@ ServiceSchema.methods.beforeDelete = function beforeDelete(done) {
  * @name beforePost
  * @function beforePost
  * @description pre save service logics
- * @param  {function} done callback to invoke on success or error
+ * @param  {Function} done callback to invoke on success or error
  *
  * @since 0.1.0
  * @version 1.0.0
@@ -587,7 +587,7 @@ ServiceSchema.methods.beforePost = function beforePost(done) {
  * @name afterPost
  * @function afterPost
  * @description post save service logics
- * @param  {function} done callback to invoke on success or error
+ * @param  {Function} done callback to invoke on success or error
  *
  * @since 0.1.0
  * @version 1.0.0
