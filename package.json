@@ -27,8 +27,8 @@
     "codetanzania",
     "majifix",
     "majifix-module",
-    "service",
-    "open311"
+    "open311",
+    "service"
   ],
   "repository": {
     "type": "git",
