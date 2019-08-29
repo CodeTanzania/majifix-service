@@ -1,17 +1,3 @@
-/**
- * @module open311
- * @name open311
- * @description open311 extensions for a service
- *
- * @see {@link http://wiki.open311.org/GeoReport_v2/}
- * @see {@link http://wiki.open311.org/GeoReport_v2/#get-service-list}
- *
- * @author lally elias<lallyelias87@gmail.com>
- * @since  0.1.0
- * @version 0.1.0
- */
-
-/* dependencies */
 import _ from 'lodash';
 import { getString } from '@lykmapipo/env';
 

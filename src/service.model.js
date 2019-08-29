@@ -1,23 +1,3 @@
-/**
- * @module Service
- * @name Service
- * @description A representation of an acceptable
- * service (request types)(e.g Water Leakage) offered(or handled)
- * by a specific jurisdiction.
- *
- * @requires https://github.com/CodeTanzania/majifix-jurisdiction
- * @requires https://github.com/CodeTanzania/majifix-priority
- * @requires https://github.com/CodeTanzania/majifix-service-group
- * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
- * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
- * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
- *
- * @author lally elias <lallyelias87@mail.com>
- * @license MIT
- * @since 0.1.0
- * @version 0.1.0
- * @public
- */
 import _ from 'lodash';
 import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
@@ -68,10 +48,24 @@ const INDEX_UNIQUE = {
 };
 
 /**
- * @name ServiceSchema
+ * @module Service
+ * @name Service
+ * @description A representation of an acceptable
+ * service (request types)(e.g Water Leakage) offered(or handled)
+ * by a specific jurisdiction.
+ *
+ * @requires https://github.com/CodeTanzania/majifix-jurisdiction
+ * @requires https://github.com/CodeTanzania/majifix-priority
+ * @requires https://github.com/CodeTanzania/majifix-service-group
+ * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
+ * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
+ * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
+ *
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
  * @since 0.1.0
  * @version 0.1.0
- * @private
+ * @public
  */
 const ServiceSchema = createSchema(
   {

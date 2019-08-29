@@ -1,3 +1,5 @@
+import { createSubSchema } from '@lykmapipo/mongoose-common';
+
 /**
  * @module flags
  * @name flags
@@ -9,14 +11,6 @@
  * @license MIT
  * @since  0.1.0
  * @version 0.1.0
- */
-
-/* dependencies */
-import { createSubSchema } from '@lykmapipo/mongoose-common';
-
-/**
- * @name FlagsSchema
- * @private
  */
 const FlagsSchema = createSubSchema({
   /**
