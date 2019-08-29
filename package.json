@@ -109,7 +109,7 @@
     "@codetanzania/majifix-common": ">=0.17.0",
     "@codetanzania/majifix-jurisdiction": ">=1.8.0",
     "@codetanzania/majifix-priority": ">=1.6.0",
-    "@codetanzania/majifix-service-group": ">=1.3.1",
+    "@codetanzania/majifix-service-group": ">=1.4.0",
     "@lykmapipo/common": ">=0.25.2",
     "@lykmapipo/env": ">=0.12.2",
     "@lykmapipo/express-common": ">=0.17.10",
