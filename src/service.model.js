@@ -1,23 +1,3 @@
-/**
- * @module Service
- * @name Service
- * @description A representation of an acceptable
- * service (request types)(e.g Water Leakage) offered(or handled)
- * by a specific jurisdiction.
- *
- * @requires https://github.com/CodeTanzania/majifix-jurisdiction
- * @requires https://github.com/CodeTanzania/majifix-priority
- * @requires https://github.com/CodeTanzania/majifix-service-group
- * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
- * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
- * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
- *
- * @author lally elias <lallyelias87@mail.com>
- * @license MIT
- * @since 0.1.0
- * @version 0.1.0
- * @public
- */
 import _ from 'lodash';
 import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
@@ -68,10 +48,24 @@ const INDEX_UNIQUE = {
 };
 
 /**
- * @name ServiceSchema
+ * @module Service
+ * @name Service
+ * @description A representation of an acceptable
+ * service (request types)(e.g Water Leakage) offered(or handled)
+ * by a specific jurisdiction.
+ *
+ * @requires https://github.com/CodeTanzania/majifix-jurisdiction
+ * @requires https://github.com/CodeTanzania/majifix-priority
+ * @requires https://github.com/CodeTanzania/majifix-service-group
+ * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
+ * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
+ * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
+ *
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
  * @since 0.1.0
  * @version 0.1.0
- * @private
+ * @public
  */
 const ServiceSchema = createSchema(
   {
@@ -374,7 +368,8 @@ ServiceSchema.index(INDEX_UNIQUE, { unique: true });
 /**
  * @name  preValidate
  * @description run custom logics before validations
- * @returns {Function} next a callback invoked after pre validate
+ * @param {Function} next a callback invoked after pre validate
+ * @returns {object|Error} valid instance or error
  * @type {Function}
  */
 ServiceSchema.pre('validate', function validate(next) {
@@ -397,6 +392,12 @@ ServiceSchema.pre('validate', function validate(next) {
  * @instance
  */
 ServiceSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -425,7 +426,7 @@ ServiceSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**

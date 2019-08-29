@@ -1,18 +1,24 @@
 # majifix-service
 
 [![Build Status](https://travis-ci.org/CodeTanzania/majifix-service.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service)
-[![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service)
+[![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service.svg)](https://david-dm.org/CodeTanzania/majifix-service)
 [![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service/badge.svg?branch=develop)](https://coveralls.io/github/CodeTanzania/majifix-service?branch=develop)
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service/tree/develop)
+[![GitHub License](https://img.shields.io/github/license/CodeTanzania/majifix-service)](https://github.com/CodeTanzania/majifix-service/blob/develop/LICENSE)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service/tree/develop) 
+
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Code Style](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
+[![npm version](https://img.shields.io/npm/v/@codetanzania/majifix-service)](https://www.npmjs.com/package/@codetanzania/majifix-service)
 
 A representation of an acceptable service (request types)(e.g Water Leakage) offered(or handled) by a specific jurisdiction.
 
 ## Requirements
 
-- [NodeJS v8.11.1+](https://nodejs.org)
-- [Npm v5.6.0+](https://www.npmjs.com/)
-- [MongoDB v3.4.10+](https://www.mongodb.com/)
-- [Mongoose v5.1.2+](https://github.com/Automattic/mongoose)
+- [NodeJS v12+](https://nodejs.org)
+- [Npm v6+](https://www.npmjs.com/)
+- [MongoDB v4+](https://www.mongodb.com/)
+- [Mongoose v5.6+](https://github.com/Automattic/mongoose)
 
 ## Installation
 
@@ -23,16 +29,14 @@ npm install @codetanzania/majifix-service --save
 ## Usage
 
 ```js
-const mongoose = require('mongoose');
-const { app } = require('@codetanzania/majifix-service');
+import { connect } from '@lykmapipo/mongoose-common';
+import { Service, start } from '@codetanzania/majifix-service-group';
 
-//connect to mongodb
-mongoose.connect(process.env.MONGODB_URI);
+// connect to mongodb
+connect(process.env.MONGODB_URI, error => { ... });
 
-//fire the app
-app.start(function(error, env) {
-  ...
-});
+// fire http server
+start(error => { ... });
 ```
 
 ## Testing

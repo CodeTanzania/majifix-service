@@ -2,7 +2,7 @@ import { expect, create, clear } from '@lykmapipo/mongoose-test-helpers';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
-import { Service } from '../../src/index';
+import { Service } from '../../src';
 
 describe('Service getOneOrDefault', () => {
   before(done => clear(done));

@@ -1,16 +1,16 @@
 const _ = require('lodash');
-const { waterfall } = require('async');
-const { connect } = require('@lykmapipo/mongoose-common');
+const { waterfall, parallel } = require('async');
+const { connect, clear } = require('@lykmapipo/mongoose-common');
+const { Predefine } = require('@lykmapipo/predefine');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
-const { Priority } = require('@codetanzania/majifix-priority');
 const { ServiceGroup } = require('@codetanzania/majifix-service-group');
+const { Priority } = require('@codetanzania/majifix-priority');
 const { Service } = require('../lib');
 
 /* track seeding time */
 let seedStart;
 let seedEnd;
 
-/* eslint-disable */
 const log = (stage, error, results) => {
   if (error) {
     console.error(`${stage} seed error`, error);
@@ -21,77 +21,54 @@ const log = (stage, error, results) => {
     console.info(`${stage} seed result`, val);
   }
 };
-/* eslint-enable */
 
-connect(err => {
-  if (err) {
-    throw err;
-  }
+const clearSeed = next =>
+  clear(Service, ServiceGroup, Priority, Jurisdiction, Predefine, () => next());
 
-  waterfall(
-    [
-      function clearService(next) {
-        Service.deleteMany(() => next());
-      },
-
-      function clearPriority(next) {
-        Priority.deleteMany(() => next());
-      },
-
-      function clearJurisdiction(next) {
-        Jurisdiction.deleteMany(() => next());
-      },
-
-      function clearServiceGroup(next) {
-        ServiceGroup.deleteMany(() => next());
-      },
-
-      function seedJurisdiction(next) {
-        const jurisdiction = Jurisdiction.fake();
-        jurisdiction.post(next);
-      },
-
-      function seedPriority(jurisdiction, next) {
-        const priority = Priority.fake();
-        priority.jurisdiction = jurisdiction;
-        priority.post((error, created) => {
-          next(error, jurisdiction, created);
-        });
-      },
-
-      function seedServiceGroup(jurisdiction, priority, next) {
-        const group = ServiceGroup.fake();
-        group.jurisdiction = jurisdiction;
-        group.post((error, created) => {
-          next(error, jurisdiction, priority, created);
-        });
-      },
-
-      function seedService(jurisdiction, priority, group, next) {
-        seedStart = Date.now();
-        let services = Service.fake(50);
-
-        services = _.forEach(services, service => {
-          const sample = service;
-          sample.jurisdiction = jurisdiction;
-          sample.priority = priority;
-          sample.group = group;
-          sample.flags = { external: _.sample([true, false]) };
-          return sample;
-        });
-
-        Service.create(services, next);
-      },
-    ],
-    (error, results) => {
-      if (error) {
-        throw error;
-      }
-      seedEnd = Date.now();
-
-      log('time', null, seedEnd - seedStart);
-      log('final', error, results);
-      process.exit(0);
-    }
+const seedType = next => Predefine.fake().post(next);
+const seedJurisdiction = next => Jurisdiction.fake().post(next);
+const seedPriority = next => Priority.fake().post(next);
+const seedGroup = next => ServiceGroup.fake().post(next);
+const preSeed = next =>
+  parallel(
+    {
+      type: seedType,
+      jurisdiction: seedJurisdiction,
+      priority: seedPriority,
+      group: seedGroup,
+    },
+    next
   );
+
+const seedService = ({ type, jurisdiction, priority, group }, next) => {
+  let services = Service.fake(50);
+
+  services = _.forEach(services, service => {
+    service.set({ type, jurisdiction, priority, group });
+    return service;
+  });
+
+  Service.create(services, next);
+};
+
+const seed = () => {
+  seedEnd = Date.now();
+  waterfall([clearSeed, preSeed, seedService], (error, results) => {
+    if (error) {
+      throw error;
+    }
+    seedEnd = Date.now();
+
+    log('time', null, seedEnd - seedStart);
+    log('final', error, results);
+    process.exit(0);
+  });
+};
+
+// connect and seed
+connect(error => {
+  if (error) {
+    throw error;
+  }
+  seed();
 });
