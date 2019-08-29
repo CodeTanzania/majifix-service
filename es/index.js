@@ -1,8 +1,9 @@
 import { randomColor, idOf, mergeObjects, compact, pkg } from '@lykmapipo/common';
+import { getString, apiVersion as apiVersion$1 } from '@lykmapipo/env';
+export { start } from '@lykmapipo/express-common';
 import _ from 'lodash';
-import { getString } from '@lykmapipo/env';
 import { createSubSchema, model, createSchema, ObjectId } from '@lykmapipo/mongoose-common';
-import { localizedIndexesFor, localize, localizedKeysFor, localizedValuesFor } from 'mongoose-locale-schema';
+import { localizedIndexesFor, localize, localizedValuesFor, localizedKeysFor } from 'mongoose-locale-schema';
 import actions from 'mongoose-rest-actions';
 import exportable from '@lykmapipo/mongoose-exportable';
 import { MODEL_NAME_SERVICE, checkDependenciesFor, POPULATION_MAX_DEPTH, COLLECTION_NAME_SERVICE, MODEL_NAME_SERVICEREQUEST, PATH_NAME_SERVICE } from '@codetanzania/majifix-common';
@@ -24,11 +25,6 @@ import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, 
  * @license MIT
  * @since  0.1.0
  * @version 0.1.0
- */
-
-/**
- * @name SlaSchema
- * @private
  */
 const SlaSchema = createSubSchema({
   /**
@@ -66,11 +62,6 @@ const SlaSchema = createSubSchema({
  * @license MIT
  * @since  0.1.0
  * @version 0.1.0
- */
-
-/**
- * @name FlagsSchema
- * @private
  */
 const FlagsSchema = createSubSchema({
   /**
@@ -123,19 +114,6 @@ const FlagsSchema = createSubSchema({
     fake: true,
   },
 });
-
-/**
- * @module open311
- * @name open311
- * @description open311 extensions for a service
- *
- * @see {@link http://wiki.open311.org/GeoReport_v2/}
- * @see {@link http://wiki.open311.org/GeoReport_v2/#get-service-list}
- *
- * @author lally elias<lallyelias87@gmail.com>
- * @since  0.1.0
- * @version 0.1.0
- */
 
 /* constants */
 const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
@@ -240,27 +218,6 @@ function open311Plugin(schema) {
   };
 }
 
-/**
- * @module Service
- * @name Service
- * @description A representation of an acceptable
- * service (request types)(e.g Water Leakage) offered(or handled)
- * by a specific jurisdiction.
- *
- * @requires https://github.com/CodeTanzania/majifix-jurisdiction
- * @requires https://github.com/CodeTanzania/majifix-priority
- * @requires https://github.com/CodeTanzania/majifix-service-group
- * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
- * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
- * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
- *
- * @author lally elias <lallyelias87@mail.com>
- * @license MIT
- * @since 0.1.0
- * @version 0.1.0
- * @public
- */
-
 /* constants */
 const DEFAULT_LOCALE$1 = getString('DEFAULT_LOCALE', 'en');
 const OPTION_SELECT = {
@@ -283,10 +240,24 @@ const INDEX_UNIQUE = {
 };
 
 /**
- * @name ServiceSchema
+ * @module Service
+ * @name Service
+ * @description A representation of an acceptable
+ * service (request types)(e.g Water Leakage) offered(or handled)
+ * by a specific jurisdiction.
+ *
+ * @requires https://github.com/CodeTanzania/majifix-jurisdiction
+ * @requires https://github.com/CodeTanzania/majifix-priority
+ * @requires https://github.com/CodeTanzania/majifix-service-group
+ * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction|Jurisdiction}
+ * @see {@link https://github.com/CodeTanzania/majifix-priority|Priority}
+ * @see {@link https://github.com/CodeTanzania/majifix-service-group|ServiceGroup}
+ *
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
  * @since 0.1.0
  * @version 0.1.0
- * @private
+ * @public
  */
 const ServiceSchema = createSchema(
   {
@@ -589,7 +560,8 @@ ServiceSchema.index(INDEX_UNIQUE, { unique: true });
 /**
  * @name  preValidate
  * @description run custom logics before validations
- * @returns {Function} next a callback invoked after pre validate
+ * @param {Function} next a callback invoked after pre validate
+ * @returns {object|Error} valid instance or error
  * @type {Function}
  */
 ServiceSchema.pre('validate', function validate(next) {
@@ -612,6 +584,12 @@ ServiceSchema.pre('validate', function validate(next) {
  * @instance
  */
 ServiceSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -640,7 +618,7 @@ ServiceSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**
@@ -768,20 +746,6 @@ ServiceSchema.statics.getOneOrDefault = (criteria, done) => {
 /* export service model */
 var Service = model(MODEL_NAME_SERVICE, ServiceSchema);
 
-/**
- * @apiDefine Service  Service
- *
- * @apiDescription A representation of an acceptable
- * service (request types)(e.g Water Leakage) offered(or handled)
- * by a specific jurisdiction.
- *
- * @author lally elias <lallyelias87@mail.com>
- * @license MIT
- * @since  0.1.0
- * @version 0.1.0
- * @public
- */
-
 /* constants */
 const API_VERSION = getString('API_VERSION', '1.0.0');
 const PATH_OPEN_311 = '/open311/services.:ext?';
@@ -791,26 +755,28 @@ const PATH_EXPORT = '/services/export';
 const PATH_SCHEMA = '/services/schema/';
 const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/services';
 
-/* declarations */
+/**
+ * @name ServiceHttpRouter
+ * @namespace ServiceHttpRouter
+ *
+ * @description A representation of an acceptable
+ * service (request types)(e.g Water Leakage) offered(or handled)
+ * by a specific jurisdiction.
+ *
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since  0.1.0
+ * @version 0.1.0
+ * @public
+ */
 const router = new Router({
   version: API_VERSION,
 });
 
 /**
- * @api {get} /services List Services
- * @apiVersion 1.0.0
- * @apiName GetServices
- * @apiGroup Service
- * @apiDescription Returns a list of services
- * @apiUse RequestHeaders
- * @apiUse Services
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServicesSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetServices
+ * @memberof ServiceHttpRouter
+ * @description Returns a list of services
  */
 router.get(
   PATH_LIST,
@@ -820,12 +786,9 @@ router.get(
 );
 
 /**
- * @api {get} /services/schema Get Service Schema
- * @apiVersion 1.0.0
- * @apiName GetServiceSchema
- * @apiGroup Service
- * @apiDescription Returns service json schema definition
- * @apiUse RequestHeaders
+ * @name GetServiceSchema
+ * @memberof ServiceHttpRouter
+ * @description Returns service json schema definition
  */
 router.get(
   PATH_SCHEMA,
@@ -838,12 +801,9 @@ router.get(
 );
 
 /**
- * @api {get} /services/export Export Services
- * @apiVersion 1.0.0
- * @apiName ExportServices
- * @apiGroup Service
- * @apiDescription Export services as csv
- * @apiUse RequestHeaders
+ * @name ExportServices
+ * @memberof ServiceHttpRouter
+ * @description Export services as csv
  */
 router.get(
   PATH_EXPORT,
@@ -857,20 +817,9 @@ router.get(
 );
 
 /**
- * @api {get} /open311/services List Services
- * @apiVersion 1.0.0
- * @apiName GetOpen311Services
- * @apiGroup Service
- * @apiDescription Returns a list of services in open311 format
- * @apiUse RequestHeaders
- * @apiUse Services
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServicesSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetOpen311Services
+ * @memberof ServiceHttpRouter
+ * @description Returns a list of services in open311 format
  * @todo improve documentation
  */
 router.get(PATH_OPEN_311, function getServices(request, response, next) {
@@ -909,20 +858,9 @@ router.get(PATH_OPEN_311, function getServices(request, response, next) {
 });
 
 /**
- * @api {post} /services Create New Service
- * @apiVersion 1.0.0
- * @apiName PostService
- * @apiGroup Service
- * @apiDescription Create new service
- * @apiUse RequestHeaders
- * @apiUse Service
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PostService
+ * @memberof ServiceHttpRouter
+ * @description Create new service
  */
 router.post(
   PATH_LIST,
@@ -932,20 +870,9 @@ router.post(
 );
 
 /**
- * @api {get} /services/:id Get Existing Service
- * @apiVersion 1.0.0
- * @apiName GetService
- * @apiGroup Service
- * @apiDescription Get existing service
- * @apiUse RequestHeaders
- * @apiUse Service
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetService
+ * @memberof ServiceHttpRouter
+ * @description Get existing service
  */
 router.get(
   PATH_SINGLE,
@@ -955,20 +882,9 @@ router.get(
 );
 
 /**
- * @api {patch} /services/:id Patch Existing Service
- * @apiVersion 1.0.0
- * @apiName PatchService
- * @apiGroup Service
- * @apiDescription Patch existing service
- * @apiUse RequestHeaders
- * @apiUse Service
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PatchService
+ * @memberof ServiceHttpRouter
+ * @description Patch existing service
  */
 router.patch(
   PATH_SINGLE,
@@ -978,20 +894,9 @@ router.patch(
 );
 
 /**
- * @api {put} /services/:id Put Existing Service
- * @apiVersion 1.0.0
- * @apiName PutService
- * @apiGroup Service
- * @apiDescription Put existing service
- * @apiUse RequestHeaders
- * @apiUse Service
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PutService
+ * @memberof ServiceHttpRouter
+ * @description Put existing service
  */
 router.put(
   PATH_SINGLE,
@@ -1001,20 +906,9 @@ router.put(
 );
 
 /**
- * @api {delete} /services/:id Delete Existing Service
- * @apiVersion 1.0.0
- * @apiName DeleteService
- * @apiGroup Service
- * @apiDescription Delete existing service
- * @apiUse RequestHeaders
- * @apiUse Service
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name DeleteService
+ * @memberof ServiceHttpRouter
+ * @description Delete existing service
  */
 router.delete(
   PATH_SINGLE,
@@ -1025,20 +919,9 @@ router.delete(
 );
 
 /**
- * @api {get} /jurisdictions/:jurisdiction/services List Jurisdiction Services
- * @apiVersion 1.0.0
- * @apiName GetJurisdictionServices
- * @apiGroup Service
- * @apiDescription Returns a list of services of specified jurisdiction
- * @apiUse RequestHeaders
- * @apiUse Services
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServicesSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetJurisdictionServices
+ * @memberof ServiceHttpRouter
+ * @description Returns a list of services of specified jurisdiction
  */
 router.get(
   PATH_JURISDICTION,
@@ -1060,14 +943,20 @@ router.get(
  * @license MIT
  * @example
  *
- * const { app } = require('majifix-service-group');
+ * const { Service, start } = require('majifix-service-group');
+ * start(error => { ... });
  *
- * ...
- *
- * app.start()
  */
 
-/* expose package information */
+/**
+ * @name info
+ * @description package information
+ * @type {object}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.0.0
+ * @version 0.1.0
+ */
 const info = pkg(
   `${__dirname}/package.json`,
   'name',
@@ -1081,7 +970,15 @@ const info = pkg(
   'contributors'
 );
 
-/* extract router api version */
-const apiVersion = router.version;
+/**
+ * @name apiVersion
+ * @description http router api version
+ * @type {string}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+const apiVersion = apiVersion$1();
 
-export { Service, apiVersion, info, router };
+export { Service, apiVersion, info, router as serviceRouter };
