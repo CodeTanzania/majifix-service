@@ -5,10 +5,10 @@ import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
-import { Service, apiVersion, router } from '../../src';
+import { Service, apiVersion, serviceRouter } from '../../src';
 
 describe('Service', () => {
-  mount(router);
+  mount(serviceRouter);
 
   describe('Rest API', () => {
     let service;
