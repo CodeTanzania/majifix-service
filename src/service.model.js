@@ -368,7 +368,8 @@ ServiceSchema.index(INDEX_UNIQUE, { unique: true });
 /**
  * @name  preValidate
  * @description run custom logics before validations
- * @returns {Function} next a callback invoked after pre validate
+ * @param {Function} next a callback invoked after pre validate
+ * @returns {object|Error} valid instance or error
  * @type {Function}
  */
 ServiceSchema.pre('validate', function validate(next) {
@@ -391,6 +392,12 @@ ServiceSchema.pre('validate', function validate(next) {
  * @instance
  */
 ServiceSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -419,7 +426,7 @@ ServiceSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**
