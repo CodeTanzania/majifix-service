@@ -1,159 +1,157 @@
-import request from 'supertest';
-import { app, mount } from '@lykmapipo/express-common';
-import { clear, create, expect } from '@lykmapipo/mongoose-test-helpers';
+import {
+  clear as clearHttp,
+  testRouter,
+} from '@lykmapipo/express-test-helpers';
+import {
+  clear as clearDb,
+  create,
+  expect,
+} from '@lykmapipo/mongoose-test-helpers';
 import { Predefine } from '@lykmapipo/predefine';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { ServiceGroup } from '@codetanzania/majifix-service-group';
 import { Priority } from '@codetanzania/majifix-priority';
-import { Service, apiVersion, serviceRouter } from '../../src';
+import { Service, serviceRouter } from '../../src';
 
-describe('Service', () => {
-  mount(serviceRouter);
+describe('Service Rest API', () => {
+  const type = Predefine.fake();
+  const jurisdiction = Jurisdiction.fake();
+  const priority = Priority.fake();
+  const group = ServiceGroup.fake();
+  const service = Service.fake();
+  service.set({ jurisdiction, group, type, priority });
 
-  describe('Rest API', () => {
-    let service;
-    const jurisdiction = Jurisdiction.fake();
-    const priority = Priority.fake();
-    const group = ServiceGroup.fake();
-    const type = Predefine.fake();
+  const options = {
+    pathSingle: '/services/:id',
+    pathList: '/services',
+    pathSchema: '/services/schema/',
+    pathExport: '/services/export/',
+  };
 
-    before(done => clear(done));
+  before(done => clearDb(Service, ServiceGroup, Priority, done));
+  before(done => clearDb(Jurisdiction, Predefine, done));
 
-    before(done => create(jurisdiction, priority, group, type, done));
+  before(() => clearHttp());
 
-    it('should handle HTTP POST on /services', done => {
-      service = Service.fake();
-      service.jurisdiction = jurisdiction;
-      service.group = group;
-      service.type = type;
-      service.priority = priority;
+  before(done => create(type, jurisdiction, priority, group, done));
 
-      request(app)
-        .post(`/${apiVersion}/services`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(service)
-        .expect(201)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const created = response.body;
-
-          expect(created._id).to.exist;
-          expect(created.code).to.exist;
-          expect(created.name.en).to.exist;
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP GET on /services', done => {
-      request(app)
-        .get(`/${apiVersion}/services`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Type', /json/)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          // assert payload
-          const result = response.body;
-          expect(result.data).to.exist;
-          expect(result.total).to.exist;
-          expect(result.limit).to.exist;
-          expect(result.skip).to.exist;
-          expect(result.page).to.exist;
-          expect(result.pages).to.exist;
-          expect(result.lastModified).to.exist;
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP GET on /services/id:', done => {
-      request(app)
-        .get(`/${apiVersion}/services/${service._id}`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const found = response.body;
-          expect(found._id).to.exist;
-          expect(found._id).to.be.equal(service._id.toString());
-          expect(found.name.en).to.be.equal(service.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP PATCH on /services/id:', done => {
-      const patch = service.fakeOnly('name');
-
-      request(app)
-        .patch(`/${apiVersion}/services/${service._id}`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(patch)
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const patched = response.body;
-
-          expect(patched._id).to.exist;
-          expect(patched._id).to.be.equal(service._id.toString());
-          expect(patched.name.en).to.be.equal(service.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP PUT on /services/id:', done => {
-      const put = service.fakeOnly('name');
-
-      request(app)
-        .put(`/${apiVersion}/services/${service._id}`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(put)
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const updated = response.body;
-
-          expect(updated._id).to.exist;
-          expect(updated._id).to.be.equal(service._id.toString());
-          expect(updated.name.en).to.be.equal(service.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP DELETE on /services/:id', done => {
-      request(app)
-        .delete(`/${apiVersion}/services/${service._id}`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const deleted = response.body;
-
-          expect(deleted._id).to.exist;
-          expect(deleted._id).to.be.equal(service._id.toString());
-          expect(deleted.name.en).to.be.equal(service.name.en);
-
-          done(error, response);
-        });
-    });
-
-    after(done => clear(done));
+  it('should handle HTTP POST on /services', done => {
+    const { testPost } = testRouter(options, serviceRouter);
+    testPost({ ...service.toObject() })
+      .expect(201)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const created = new Service(body);
+        expect(created._id).to.exist.and.be.eql(service._id);
+        expect(created.code).to.exist.and.be.eql(service.code);
+        done(error, body);
+      });
   });
+
+  it('should handle HTTP GET on /services', done => {
+    const { testGet } = testRouter(options, serviceRouter);
+    testGet()
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        expect(body.data).to.exist;
+        expect(body.total).to.exist;
+        expect(body.limit).to.exist;
+        expect(body.skip).to.exist;
+        expect(body.page).to.exist;
+        expect(body.pages).to.exist;
+        expect(body.lastModified).to.exist;
+        done(error, body);
+      });
+  });
+
+  it('should handle GET /services/schema', done => {
+    const { testGetSchema } = testRouter(options, serviceRouter);
+    testGetSchema().expect(200, done);
+  });
+
+  it('should handle GET /services/export', done => {
+    const { testGetExport } = testRouter(options, serviceRouter);
+    testGetExport()
+      .expect('Content-Type', 'text/csv; charset=utf-8')
+      .expect(({ headers }) => {
+        expect(headers['content-disposition']).to.exist;
+      })
+      .expect(200, done);
+  });
+
+  it('should handle HTTP GET on /services/:id', done => {
+    const { testGet } = testRouter(options, serviceRouter);
+    const params = { id: service._id.toString() };
+    testGet(params)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const found = new Service(body);
+        expect(found._id).to.exist.and.be.eql(service._id);
+        expect(found.code).to.exist.and.be.eql(service.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP PATCH on /services/:id', done => {
+    const { testPatch } = testRouter(options, serviceRouter);
+    const { description } = service.fakeOnly('description');
+    const params = { id: service._id.toString() };
+    testPatch(params, { description })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new Service(body);
+        expect(patched._id).to.exist.and.be.eql(service._id);
+        expect(patched.code).to.exist.and.be.eql(service.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP PUT on /services/:id', done => {
+    const { testPut } = testRouter(options, serviceRouter);
+    const { description } = service.fakeOnly('description');
+    const params = { id: service._id.toString() };
+    testPut(params, { description })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new Service(body);
+        expect(patched._id).to.exist.and.be.eql(service._id);
+        expect(patched.code).to.exist.and.be.eql(service.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP DELETE on /services/:id', done => {
+    const { testDelete } = testRouter(options, serviceRouter);
+    const params = { id: service._id.toString() };
+    testDelete(params)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new Service(body);
+        expect(patched._id).to.exist.and.be.eql(service._id);
+        expect(patched.code).to.exist.and.be.eql(service.code);
+        done(error, body);
+      });
+  });
+
+  after(() => clearHttp());
+
+  after(done => clearDb(Service, ServiceGroup, Priority, done));
+  after(done => clearDb(Jurisdiction, Predefine, done));
 });
