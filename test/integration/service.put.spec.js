@@ -5,7 +5,7 @@ import { Priority } from '@codetanzania/majifix-priority';
 import { clear, create, expect } from '@lykmapipo/mongoose-test-helpers';
 import { Service } from '../../src';
 
-describe.only('Service static put', () => {
+describe('Service static put', () => {
   before(done => clear(Jurisdiction, Priority, ServiceGroup, done));
 
   const jurisdiction = Jurisdiction.fake();
@@ -60,7 +60,7 @@ describe.only('Service static put', () => {
   after(done => clear(Jurisdiction, Priority, ServiceGroup, Service, done));
 });
 
-describe.only('Service instance put', () => {
+describe('Service instance put', () => {
   before(done => clear(Jurisdiction, Priority, ServiceGroup, done));
 
   const jurisdiction = Jurisdiction.fake();
