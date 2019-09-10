@@ -2,231 +2,237 @@ import { SchemaTypes } from '@lykmapipo/mongoose-common';
 import { expect } from '@lykmapipo/mongoose-test-helpers';
 import Service from '../../src/service.model';
 
-describe('Service', () => {
-  describe('Schema', () => {
-    it('should have jurisdiction field', () => {
-      const { jurisdiction } = Service.schema.tree;
-      const { instance } = Service.schema.paths.jurisdiction;
+describe('Service Schema', () => {
+  it('should have jurisdiction field', () => {
+    const jurisdiction = Service.path('jurisdiction');
 
-      expect(instance).to.be.equal('ObjectID');
-      expect(jurisdiction).to.exist;
-      expect(jurisdiction).to.be.an('object');
-      expect(jurisdiction.type).to.be.a('function');
-      expect(jurisdiction.type.name).to.be.equal('ObjectId');
-      expect(jurisdiction.index).to.be.true;
-      expect(jurisdiction.exists).to.be.exist.and.be.an('object');
-      expect(jurisdiction.autopopulate).to.exist.and.be.an('object');
+    expect(jurisdiction).to.exist;
+    expect(jurisdiction).to.be.instanceof(SchemaTypes.ObjectID);
+    expect(jurisdiction.options).to.exist;
+    expect(jurisdiction.options).to.be.an('object');
+    expect(jurisdiction.options.type).to.be.a('function');
+    expect(jurisdiction.options.type.name).to.be.equal('ObjectId');
+    expect(jurisdiction.options.ref).to.exist.and.be.equal('Jurisdiction');
+    expect(jurisdiction.options.exists).to.exist.and.be.an('object');
+    expect(jurisdiction.options.autopopulate).to.exist.and.an('object');
+    expect(jurisdiction.options.index).to.be.true;
+  });
+
+  it('should have group field', () => {
+    const group = Service.path('group');
+
+    expect(group).to.exist;
+    expect(group).to.be.instanceof(SchemaTypes.ObjectID);
+    expect(group.options).to.exist;
+    expect(group.options).to.be.an('object');
+    expect(group.options.type).to.be.a('function');
+    expect(group.options.type.name).to.be.equal('ObjectId');
+    expect(group.options.ref).to.exist.and.be.equal('ServiceGroup');
+    expect(group.options.required).to.be.true;
+    expect(group.options.exists).to.exist.and.be.an('object');
+    expect(group.options.autopopulate).to.exist.and.an('object');
+    expect(group.options.index).to.be.true;
+  });
+
+  it('should have type field', () => {
+    const type = Service.path('type');
+
+    expect(type).to.exist;
+    expect(type).to.be.instanceof(SchemaTypes.ObjectID);
+    expect(type.options).to.exist;
+    expect(type.options).to.be.an('object');
+    expect(type.options.type).to.be.a('function');
+    expect(type.options.type.name).to.be.equal('ObjectId');
+    expect(type.options.ref).to.exist.and.be.equal('Predefine');
+    expect(type.options.exists).to.exist.and.be.an('object');
+    expect(type.options.autopopulate).to.exist.and.an('object');
+    expect(type.options.index).to.be.true;
+  });
+
+  it('should have priority field', () => {
+    const priority = Service.path('priority');
+
+    expect(priority).to.exist;
+    expect(priority).to.be.instanceof(SchemaTypes.ObjectID);
+    expect(priority.options).to.exist;
+    expect(priority.options).to.be.an('object');
+    expect(priority.options.type).to.be.a('function');
+    expect(priority.options.type.name).to.be.equal('ObjectId');
+    expect(priority.options.ref).to.exist.and.be.equal('Priority');
+    expect(priority.options.exists).to.exist.and.be.an('object');
+    expect(priority.options.autopopulate).to.exist.and.an('object');
+    expect(priority.options.index).to.be.true;
+  });
+
+  it('should have code field', () => {
+    const code = Service.path('code');
+
+    expect(code).to.exist;
+    expect(code).to.be.instanceof(SchemaTypes.String);
+    expect(code.options).to.exist;
+    expect(code.options).to.be.an('object');
+    expect(code.options.type).to.exist;
+    expect(code.options.trim).to.be.true;
+    expect(code.options.index).to.be.true;
+    expect(code.options.searchable).to.be.true;
+    expect(code.options.exportable).to.be.true;
+    expect(code.options.fake).to.exist;
+  });
+
+  it('should have name field', () => {
+    const name = Service.path('name');
+    const en = Service.path('name.en');
+    // const sw = Service.path('name.sw');
+
+    expect(name).to.exist;
+
+    expect(en).to.exist;
+    expect(en).to.be.instanceof(SchemaTypes.String);
+    expect(en.options).to.exist;
+    expect(en.options).to.be.an('object');
+    expect(en.options.type).to.exist;
+    expect(en.options.trim).to.be.true;
+    expect(en.options.required).to.be.true;
+    expect(en.options.index).to.be.true;
+    expect(en.options.searchable).to.be.true;
+    expect(en.options.taggable).to.be.true;
+    expect(en.options.exportable).to.be.true;
+    expect(en.options.fake).to.exist;
+
+    // expect(sw).to.exist;
+    // expect(sw).to.be.instanceof(SchemaTypes.String);
+    // expect(sw.options).to.exist;
+    // expect(sw.options).to.be.an('object');
+    // expect(sw.options.type).to.exist;
+    // expect(sw.options.trim).to.be.true;
+    // expect(sw.options.required).to.be.false;
+    // expect(sw.options.index).to.be.true;
+    // expect(sw.options.searchable).to.be.true;
+    // expect(sw.options.taggable).to.be.true;
+    // expect(sw.options.exportable).to.be.true;
+    // expect(sw.options.fake).to.exist;
+  });
+
+  it('should have description field', () => {
+    const description = Service.path('description');
+    const en = Service.path('description.en');
+    // const sw = Service.path('description.sw');
+
+    expect(description).to.exist;
+
+    expect(en).to.exist;
+    expect(en).to.be.instanceof(SchemaTypes.String);
+    expect(en.options).to.exist;
+    expect(en.options).to.be.an('object');
+    expect(en.options.type).to.exist;
+    expect(en.options.trim).to.be.true;
+    expect(en.options.required).to.be.true;
+    expect(en.options.index).to.be.true;
+    expect(en.options.searchable).to.be.true;
+    expect(en.options.exportable).to.be.true;
+    expect(en.options.fake).to.exist;
+
+    // expect(sw).to.exist;
+    // expect(sw).to.be.instanceof(SchemaTypes.String);
+    // expect(sw.options).to.exist;
+    // expect(sw.options).to.be.an('object');
+    // expect(sw.options.type).to.exist;
+    // expect(sw.options.trim).to.be.true;
+    // expect(sw.options.required).to.be.false;
+    // expect(sw.options.index).to.be.true;
+    // expect(sw.options.searchable).to.be.true;
+    // expect(sw.options.exportable).to.be.true;
+    // expect(sw.options.fake).to.exist;
+  });
+
+  it('should have color field', () => {
+    const color = Service.path('color');
+
+    expect(color).to.exist;
+    expect(color).to.be.instanceof(SchemaTypes.String);
+    expect(color.options).to.exist;
+    expect(color.options).to.be.an('object');
+    expect(color.options.type).to.exist;
+    expect(color.options.trim).to.be.true;
+    expect(color.options.uppercase).to.be.true;
+    expect(color.options.exportable).to.be.true;
+    expect(color.options.fake).to.exist;
+  });
+
+  describe('sla', () => {
+    it('should be an embedded subdocument', () => {
+      const sla = Service.path('sla');
+
+      expect(sla).to.exist;
+      expect(sla.instance).to.be.equal('Embedded');
+      expect(sla).to.be.an('object');
     });
 
-    it('should have group field', () => {
-      const { group } = Service.schema.tree;
-      const { instance } = Service.schema.paths.group;
+    it('should have ttr field', () => {
+      const ttr = Service.path('sla.ttr');
 
-      expect(instance).to.be.equal('ObjectID');
-      expect(group).to.exist;
-      expect(group).to.be.an('object');
-      expect(group.type).to.be.a('function');
-      expect(group.type.name).to.be.equal('ObjectId');
-      expect(group.index).to.be.true;
-      expect(group.exists).to.be.exist.and.be.an('object');
-      expect(group.autopopulate).to.exist.and.be.an('object');
+      expect(ttr).to.exist;
+      expect(ttr).to.be.instanceof(SchemaTypes.Number);
+      expect(ttr.options.type).to.be.a('function');
+      expect(ttr.options.type.name).to.be.equal('Number');
+      expect(ttr.options.exportable).to.be.true;
+      expect(ttr.options.index).to.be.true;
+      expect(ttr.options.default).to.exist;
+      expect(ttr.options.fake).to.exist;
+    });
+  });
+
+  describe('flags', () => {
+    it('should be an embedded subdocument', () => {
+      const flags = Service.path('flags');
+
+      expect(flags).to.exist;
+      expect(flags.instance).to.be.equal('Embedded');
+      expect(flags).to.be.an('object');
     });
 
-    it('should have type field', () => {
-      const { type } = Service.schema.tree;
-      const { instance } = Service.schema.paths.type;
+    it('should have external flag field', () => {
+      const external = Service.path('flags.external');
 
-      expect(instance).to.be.equal('ObjectID');
-      expect(type).to.exist;
-      expect(type).to.be.an('object');
-      expect(type.type).to.be.a('function');
-      expect(type.type.name).to.be.equal('ObjectId');
-      expect(type.index).to.be.true;
-      expect(type.exists).to.be.exist.and.be.an('object');
-      expect(type.autopopulate).to.exist.and.be.an('object');
+      expect(external).to.exist;
+      expect(external).to.be.instanceof(SchemaTypes.Boolean);
+      expect(external.options).to.exist;
+      expect(external.options).to.be.an('object');
+      expect(external.options.type).to.be.a('function');
+      expect(external.options.type.name).to.be.equal('Boolean');
+      expect(external.options.index).to.be.true;
+      expect(external.options.exportable).to.be.true;
+      expect(external.options.default).to.exist;
+      expect(external.options.fake).to.exist;
     });
 
-    it('should have priority field', () => {
-      const { priority } = Service.schema.tree;
-      const { instance } = Service.schema.paths.priority;
+    it('should have account flag field', () => {
+      const account = Service.path('flags.account');
 
-      expect(instance).to.be.equal('ObjectID');
-      expect(priority).to.exist;
-      expect(priority).to.be.an('object');
-      expect(priority.type).to.be.a('function');
-      expect(priority.type.name).to.be.equal('ObjectId');
-      expect(priority.index).to.be.true;
-      expect(priority.exists).to.be.exist.and.be.an('object');
-      expect(priority.autopopulate).to.exist.and.be.an('object');
+      expect(account).to.exist;
+      expect(account).to.be.instanceof(SchemaTypes.Boolean);
+      expect(account.options).to.exist;
+      expect(account.options).to.be.an('object');
+      expect(account.options.type).to.be.a('function');
+      expect(account.options.type.name).to.be.equal('Boolean');
+      expect(account.options.index).to.be.true;
+      expect(account.options.exportable).to.be.true;
+      expect(account.options.default).to.exist;
+      expect(account.options.fake).to.exist;
     });
+  });
 
-    it('should have code field', () => {
-      const { code } = Service.schema.tree;
-      const { instance } = Service.schema.paths.code;
+  it('should have default field', () => {
+    const isDefault = Service.path('default');
 
-      expect(instance).to.be.equal('String');
-      expect(code).to.exist;
-      expect(code).to.be.an('object');
-      expect(code.type).to.be.a('function');
-      expect(code.type.name).to.be.equal('String');
-      expect(code.required).to.be.true;
-      expect(code.uppercase).to.be.true;
-      expect(code.trim).to.be.true;
-      expect(code.index).to.be.true;
-      expect(code.searchable).to.be.true;
-    });
-
-    describe('name', () => {
-      it('should be an embedded sub-document', () => {
-        const { name } = Service.schema.tree;
-        const { instance } = Service.schema.paths.name;
-        const { tree } = Service.schema.tree.name;
-
-        expect(instance).to.be.equal('Embedded');
-        expect(name).to.exist;
-        expect(name).to.be.an('object');
-        expect(tree).to.exist;
-        expect(tree.en).to.exist;
-      });
-
-      it('should have type `en` locale field', () => {
-        const { instance } = Service.schema.paths.name.schema.paths.en;
-        const { en } = Service.schema.tree.name.tree;
-
-        expect(instance).to.be.equal('String');
-        expect(en).to.exist;
-        expect(en).to.be.an('object');
-        expect(en.type).to.be.a('function');
-        expect(en.type.name).to.be.equal('String');
-        expect(en.required).to.be.true;
-        expect(en.trim).to.be.true;
-        expect(en.index).to.be.true;
-        expect(en.required).to.be.true;
-        expect(en.searchable).to.be.true;
-      });
-    });
-
-    describe('description', () => {
-      it('should be an embedded sub-document', () => {
-        const { description } = Service.schema.tree;
-        const { instance } = Service.schema.paths.description;
-        const { tree } = Service.schema.tree.description;
-
-        expect(instance).to.be.equal('Embedded');
-        expect(description).to.exist;
-        expect(description).to.be.an('object');
-        expect(tree).to.exist;
-        expect(tree.en).to.exist;
-      });
-
-      it('should have type `en` locale field', () => {
-        const { instance } = Service.schema.paths.description.schema.paths.en;
-        const { en } = Service.schema.tree.description.tree;
-
-        expect(instance).to.be.equal('String');
-        expect(en).to.exist;
-        expect(en).to.be.an('object');
-        expect(en.type).to.be.a('function');
-        expect(en.type.name).to.be.equal('String');
-        expect(en.trim).to.be.true;
-        expect(en.index).to.be.true;
-        expect(en.searchable).to.be.true;
-      });
-    });
-
-    it('should have color field', () => {
-      const { color } = Service.schema.tree;
-      const { instance } = Service.schema.paths.color;
-
-      expect(instance).to.be.equal('String');
-      expect(color).to.exist;
-      expect(color).to.be.an('object');
-      expect(color.type).to.be.a('function');
-      expect(color.type.name).to.be.equal('String');
-      expect(color.trim).to.be.true;
-      expect(color.default).to.be.exist;
-    });
-
-    describe('sla', () => {
-      it('should be an embedded subdocument', () => {
-        const { sla } = Service.schema.tree;
-        const { instance } = Service.schema.paths.sla;
-        const { tree } = Service.schema.paths.sla.schema;
-
-        expect(instance).to.be.equal('Embedded');
-        expect(sla).to.exist;
-        expect(sla).to.be.an('object');
-        expect(tree).to.exist;
-        expect(tree.ttr).to.exist;
-      });
-
-      it('should have ttr field', () => {
-        const { schema } = Service.schema.paths.sla;
-        const { ttr } = schema.tree;
-        const { instance } = schema.paths.ttr;
-
-        expect(instance).to.be.equal('Number');
-        expect(ttr).to.exist;
-        expect(ttr).to.be.an('object');
-        expect(ttr.type).to.be.a('function');
-        expect(ttr.type.name).to.be.equal('Number');
-        expect(ttr.default).to.exist;
-      });
-    });
-
-    describe('flags', () => {
-      it('should be an embedded subdocument', () => {
-        const { flags } = Service.schema.tree;
-        const { instance } = Service.schema.paths.flags;
-        const { tree } = Service.schema.paths.flags.schema;
-
-        expect(instance).to.be.equal('Embedded');
-        expect(flags).to.exist;
-        expect(flags).to.be.an('object');
-        expect(tree).to.exist;
-        expect(tree.external).to.exist;
-        expect(tree.account).to.exist;
-      });
-
-      it('should have external flag field', () => {
-        const { schema } = Service.schema.paths.flags;
-        const { external } = schema.tree;
-        const { instance } = schema.paths.external;
-
-        expect(instance).to.be.equal('Boolean');
-        expect(external).to.exist;
-        expect(external).to.be.an('object');
-        expect(external.type).to.be.a('function');
-        expect(external.type.name).to.be.equal('Boolean');
-        expect(external.default).to.be.exist;
-      });
-
-      it('should have account flag field', () => {
-        const { schema } = Service.schema.paths.flags;
-        const { account } = schema.tree;
-        const { instance } = schema.paths.account;
-
-        expect(instance).to.be.equal('Boolean');
-        expect(account).to.exist;
-        expect(account).to.be.an('object');
-        expect(account.type).to.be.a('function');
-        expect(account.type.name).to.be.equal('Boolean');
-        expect(account.default).to.be.exist;
-      });
-    });
-
-    it('should have default field', () => {
-      const isDefault = Service.path('default');
-
-      expect(isDefault).to.exist;
-      expect(isDefault).to.be.instanceof(SchemaTypes.Boolean);
-      expect(isDefault.options).to.exist;
-      expect(isDefault.options).to.be.an('object');
-      expect(isDefault.options.type).to.exist;
-      expect(isDefault.options.index).to.be.true;
-      expect(isDefault.options.exportable).to.be.true;
-      expect(isDefault.options.default).to.be.false;
-      expect(isDefault.options.fake).to.exist;
-    });
+    expect(isDefault).to.exist;
+    expect(isDefault).to.be.instanceof(SchemaTypes.Boolean);
+    expect(isDefault.options).to.exist;
+    expect(isDefault.options).to.be.an('object');
+    expect(isDefault.options.type).to.exist;
+    expect(isDefault.options.index).to.be.true;
+    expect(isDefault.options.exportable).to.be.true;
+    expect(isDefault.options.default).to.be.false;
+    expect(isDefault.options.fake).to.exist;
   });
 });
