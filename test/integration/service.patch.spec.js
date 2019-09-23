@@ -6,7 +6,7 @@ import { clear, create, expect } from '@lykmapipo/mongoose-test-helpers';
 import { Service } from '../../src';
 
 describe('Service static patch', () => {
-  before(done => clear(Priority, Jurisdiction, ServiceGroup, done));
+  before(done => clear(Service, ServiceGroup, Priority, Jurisdiction, done));
 
   const jurisdiction = Jurisdiction.fake();
   const priority = Priority.fake();
@@ -106,5 +106,5 @@ describe('Service instance patch', () => {
     });
   });
 
-  after(done => clear(Priority, Jurisdiction, ServiceGroup, Service, done));
+  after(done => clear(Service, ServiceGroup, Priority, Jurisdiction, done));
 });

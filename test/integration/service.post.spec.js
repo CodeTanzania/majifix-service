@@ -6,7 +6,9 @@ import { clear, create, expect } from '@lykmapipo/mongoose-test-helpers';
 import { Service } from '../../src';
 
 describe('Service static post', () => {
-  before(done => clear(Priority, Jurisdiction, ServiceGroup, Predefine, done));
+  before(done =>
+    clear(Service, ServiceGroup, Predefine, Priority, Jurisdiction, done)
+  );
 
   const jurisdiction = Jurisdiction.fake();
   const priority = Priority.fake();
@@ -74,5 +76,7 @@ describe('Service instance post', () => {
     });
   });
 
-  after(done => clear(Priority, Jurisdiction, ServiceGroup, Predefine, done));
+  after(done =>
+    clear(Service, ServiceGroup, Predefine, Priority, Jurisdiction, done)
+  );
 });
