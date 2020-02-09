@@ -94,7 +94,7 @@
     "npm-check-updates": "4.0.1",
     "nyc": "15.0.0",
     "prettier": "1.19.1",
-    "rimraf": "3.0.1",
+    "rimraf": "3.0.2",
     "rollup": "1.31.0",
     "shelljs": "0.8.3"
   },
