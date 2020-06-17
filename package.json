@@ -95,7 +95,7 @@
     "nyc": "15.1.0",
     "prettier": "2.0.5",
     "rimraf": "3.0.2",
-    "rollup": "2.16.1",
+    "rollup": "2.17.0",
     "shelljs": "0.8.4"
   },
   "peerDependencies": {
