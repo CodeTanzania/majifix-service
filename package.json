@@ -61,11 +61,11 @@
     "url": "https://majifix-service.herokuapp.com/v1/services"
   },
   "devDependencies": {
-    "@babel/cli": "7.11.5",
-    "@babel/core": "7.11.5",
+    "@babel/cli": "7.12.0",
+    "@babel/core": "7.12.0",
     "@babel/node": "7.10.5",
-    "@babel/preset-env": "7.11.5",
-    "@babel/register": "7.11.5",
+    "@babel/preset-env": "7.12.0",
+    "@babel/register": "7.12.0",
     "@benmaruchu/faker": "4.3.0",
     "@commitlint/cli": "9.1.2",
     "@commitlint/config-conventional": "9.1.2",
