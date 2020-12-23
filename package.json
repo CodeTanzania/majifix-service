@@ -70,7 +70,7 @@
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
     "@commitlint/travis-cli": "11.0.0",
-    "@lykmapipo/express-test-helpers": "0.9.14",
+    "@lykmapipo/express-test-helpers": "0.9.15",
     "@lykmapipo/mongoose-test-helpers": "0.7.19",
     "chai": "4.2.0",
     "commitizen": "4.2.1",
