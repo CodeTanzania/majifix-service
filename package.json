@@ -73,7 +73,7 @@
     "@lykmapipo/express-test-helpers": "0.9.15",
     "@lykmapipo/mongoose-test-helpers": "0.7.19",
     "chai": "4.2.0",
-    "commitizen": "4.2.1",
+    "commitizen": "4.2.3",
     "coveralls": "3.1.0",
     "cz-conventional-changelog": "3.2.1",
     "doxdox": "3.0.0",
