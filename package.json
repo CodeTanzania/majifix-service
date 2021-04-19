@@ -90,7 +90,7 @@
     "lint-staged": "10.5.4",
     "lodash.template": "4.5.0",
     "mocha": "8.3.2",
-    "mongoose": "5.12.3",
+    "mongoose": "5.12.4",
     "npm-check-updates": "4.1.2",
     "nyc": "15.1.0",
     "prettier": "2.2.0",
@@ -99,7 +99,7 @@
     "shelljs": "0.8.4"
   },
   "peerDependencies": {
-    "mongoose": ">=5.6.11"
+    "mongoose": ">=5.6.11 || 5.12.4"
   },
   "dependencies": {
     "@codetanzania/majifix-common": ">=0.17.0",
