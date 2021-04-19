@@ -108,7 +108,7 @@
     "@codetanzania/majifix-service-group": ">=1.4.0",
     "@lykmapipo/common": "0.43.1",
     "@lykmapipo/env": ">=0.12.2",
-    "@lykmapipo/express-common": ">=0.17.10",
+    "@lykmapipo/express-common": "0.18.16",
     "@lykmapipo/express-rest-actions": ">=0.6.7",
     "@lykmapipo/mongoose-common": ">=0.25.11",
     "@lykmapipo/mongoose-exportable": ">=0.3.7",
