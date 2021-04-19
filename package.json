@@ -102,7 +102,7 @@
     "mongoose": ">=5.6.11 || 5.12.4 || 5.12"
   },
   "dependencies": {
-    "@codetanzania/majifix-common": ">=0.17.0",
+    "@codetanzania/majifix-common": "0.20.0",
     "@codetanzania/majifix-jurisdiction": ">=1.8.0",
     "@codetanzania/majifix-priority": ">=1.6.0",
     "@codetanzania/majifix-service-group": ">=1.4.0",
