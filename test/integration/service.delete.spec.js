@@ -4,84 +4,87 @@ import { Priority } from '@codetanzania/majifix-priority';
 import { create, clear, expect } from '@lykmapipo/mongoose-test-helpers';
 import { Service } from '../../src';
 
-describe('Service', () => {
+describe('Service static delete', () => {
+  before(done => clear(Service, ServiceGroup, Priority, Jurisdiction, done));
+
   const jurisdiction = Jurisdiction.fake();
   const priority = Priority.fake();
   const group = ServiceGroup.fake();
 
-  priority.jurisdiction = jurisdiction;
-  group.jurisdiction = jurisdiction;
+  before(done => create(jurisdiction, priority, group, done));
 
-  before(done => create(jurisdiction, done));
+  let service;
 
-  before(done => create(priority, group, done));
+  before(done => {
+    service = Service.fake();
+    service.jurisdiction = jurisdiction;
+    service.group = group;
+    service.priority = priority;
 
-  describe('static delete', () => {
-    let service;
+    create(service, done);
+  });
 
-    before(done => {
-      service = Service.fake();
-      service.jurisdiction = jurisdiction;
-      service.group = group;
-      service.priority = priority;
-
-      create(service, done);
-    });
-
-    it('should be able to delete', done => {
-      Service.del(service._id, (error, deleted) => {
-        expect(error).to.not.exist;
-        expect(deleted).to.exist;
-        expect(deleted._id).to.eql(service._id);
-        done(error, deleted);
-      });
-    });
-
-    it('should throw if not exists', done => {
-      Service.del(service._id, (error, deleted) => {
-        expect(error).to.exist;
-        // expect(error.status).to.exist;
-        expect(error.name).to.be.equal('DocumentNotFoundError');
-        expect(deleted).to.not.exist;
-        done();
-      });
+  it('should be able to delete', done => {
+    Service.del(service._id, (error, deleted) => {
+      expect(error).to.not.exist;
+      expect(deleted).to.exist;
+      expect(deleted._id).to.eql(service._id);
+      done(error, deleted);
     });
   });
 
-  describe('instance delete', () => {
-    let service;
-
-    before(done => {
-      service = Service.fake();
-      service.jurisdiction = jurisdiction;
-      service.group = group;
-      service.priority = priority;
-      service.post((error, created) => {
-        service = created;
-        done(error, created);
-      });
-    });
-
-    it('should be able to delete', done => {
-      service.del((error, deleted) => {
-        expect(error).to.not.exist;
-        expect(deleted).to.exist;
-        expect(deleted._id).to.eql(service._id);
-        done(error, deleted);
-      });
-    });
-
-    it('should throw if not exists', done => {
-      service.del((error, deleted) => {
-        expect(error).to.not.exist;
-        expect(deleted).to.exist;
-        expect(deleted._id).to.eql(service._id);
-        done();
-      });
+  it('should throw if not exists', done => {
+    Service.del(service._id, (error, deleted) => {
+      expect(error).to.exist;
+      // expect(error.status).to.exist;
+      expect(error.name).to.be.equal('DocumentNotFoundError');
+      expect(deleted).to.not.exist;
+      done();
     });
   });
 
-  after(done =>
-    clear('Jurisdiction', 'Priority', 'ServiceGroup', 'Service', done)
-  );
+  after(done => clear(Jurisdiction, Priority, ServiceGroup, done));
+});
+
+describe('Service instance delete', () => {
+  before(done => clear(Jurisdiction, Priority, ServiceGroup, done));
+
+  const jurisdiction = Jurisdiction.fake();
+  const priority = Priority.fake();
+  const group = ServiceGroup.fake();
+
+  before(done => create(jurisdiction, priority, group, done));
+
+  let service;
+
+  before(done => {
+    service = Service.fake();
+    service.jurisdiction = jurisdiction;
+    service.group = group;
+    service.priority = priority;
+    service.post((error, created) => {
+      service = created;
+      done(error, created);
+    });
+  });
+
+  it('should be able to delete', done => {
+    service.del((error, deleted) => {
+      expect(error).to.not.exist;
+      expect(deleted).to.exist;
+      expect(deleted._id).to.eql(service._id);
+      done(error, deleted);
+    });
+  });
+
+  it('should throw if not exists', done => {
+    service.del((error, deleted) => {
+      expect(error).to.not.exist;
+      expect(deleted).to.exist;
+      expect(deleted._id).to.eql(service._id);
+      done();
+    });
+  });
+
+  after(done => clear(Service, ServiceGroup, Priority, Jurisdiction, done));
 });

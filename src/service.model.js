@@ -196,6 +196,7 @@ const ServiceSchema = createSchema(
       index: true,
       uppercase: true,
       searchable: true,
+      exportable: true,
       fake: {
         generator: 'finance',
         type: 'account',
