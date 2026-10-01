@@ -96,7 +96,7 @@
     "prettier": "2.3.1",
     "rimraf": "3.0.2",
     "rollup": "2.51.2",
-    "shelljs": "0.8.4"
+    "shelljs": "0.8.5"
   },
   "peerDependencies": {
     "mongoose": ">=5.6.11 || 5.12.4 || 5.12"
